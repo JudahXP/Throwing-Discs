@@ -70,4 +70,25 @@ class DiscPhysicsTest {
         }
         assertEquals(velocity,DiscPhysics.steer(velocity,target,0));
     }
+    @Test void returnTurnsWithoutStoppingOrReversingInstantly() {
+        Vec3 velocity=new Vec3(0,0,1.25);
+        Vec3 next=DiscPhysics.home(velocity,new Vec3(0,0,-16));
+        assertTrue(next.length()>=velocity.length());
+        assertTrue(next.z>0);
+        assertTrue(Math.acos(next.normalize().dot(velocity.normalize()))<=Math.toRadians(18.001));
+    }
+    @Test void returningDiscConvergesFromNearbyHeadings() {
+        for(double distance : new double[]{1,2,4,8,16,32}) for(int degrees=0;degrees<360;degrees+=30) {
+            Vec3 pos=new Vec3(0,0,distance);
+            Vec3 velocity=new Vec3(Math.sin(Math.toRadians(degrees))*1.25,0,Math.cos(Math.toRadians(degrees))*1.25);
+            boolean caught=false;
+            for(int tick=0;tick<160;tick++) {
+                velocity=DiscPhysics.home(velocity,pos.scale(-1));
+                Vec3 next=pos.add(velocity);
+                if(DiscPhysics.segmentWithin(pos,next,Vec3.ZERO,0.8)) {caught=true;break;}
+                pos=next;
+            }
+            assertTrue(caught,"Return converges: distance="+distance+" heading="+degrees);
+        }
+    }
 }

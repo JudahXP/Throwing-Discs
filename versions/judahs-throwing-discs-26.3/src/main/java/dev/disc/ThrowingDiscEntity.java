@@ -38,6 +38,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
     private static final EntityDataAccessor<ItemStack> STACK = SynchedEntityData.defineId(
         ThrowingDiscEntity.class, EntityDataSerializers.ITEM_STACK);
     private UUID thrower;
+    private BlockPos dispenser;
     private int originSlot;
     private int age;
     private int bounces;
@@ -95,6 +96,15 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
 
 
     }
+    public double baseRange() {
+        return getItem().getItem() instanceof ThrowingDiscItem disc ? disc.tier.range : 16;
+    }
+    public void launchFromDispenser(ServerLevel server, BlockPos pos, Vec3 direction, ItemStack stack, int slot) {
+        dispenser = pos.immutable(); originSlot = slot;
+        DiscEnchantments.normalize(stack, server); setItem(stack);
+        setPos(Vec3.atCenterOf(pos).add(direction.scale(0.85)));
+        setDeltaMovement(direction.scale(DiscPhysics.SPEED));
+    }
     @Override public void tick() {
         super.tick();
         if (level().isClientSide()) updateVisualBank();
@@ -105,11 +115,12 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
         DiscFlights.track(this);
         age++;
         ServerPlayer player = thrower == null ? null : server.getServer().getPlayerList().getPlayer(thrower);
-        if (player == null || !player.isAlive() || player.isSpectator()) { dropStack(server); return; }
-        if (player.level() != server || age > DiscPhysics.MAX_FLIGHT_TICKS) { dropStack(server); return; }
+        if (dispenser == null && (player == null || !player.isAlive() || player.isSpectator())) { dropStack(server); return; }
+        if ((dispenser == null && player.level() != server) || age > DiscPhysics.MAX_FLIGHT_TICKS) { dropStack(server); return; }
+        if (dispenser != null && (!server.hasChunkAt(dispenser) || !(server.getBlockEntity(dispenser) instanceof net.minecraft.world.level.block.entity.DispenserBlockEntity))) { dropStack(server); return; }
         if (!returning && (age >= DiscPhysics.MAX_OUTBOUND_TICKS
             || getDeltaMovement().lengthSqr() < 1.0e-10
-            || distance >= DiscPhysics.RANGE + DiscPhysics.rangeBonus(enchantmentLevel("range")) + bounces * DiscPhysics.BOUNCE_BONUS - 1.0e-6)) beginReturn();
+            || distance >= baseRange() + DiscPhysics.rangeBonus(enchantmentLevel("range")) + bounces * DiscPhysics.BOUNCE_BONUS - 1.0e-6)) beginReturn();
         if (returning) flyHome(player); else flyOutbound(server);
         if (!isRemoved()) keepFlightLoaded(server);
     }
@@ -134,10 +145,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
         for (int step = 0; step < 4 && timeLeft > 1.0e-5 && !returning; step++) {
             Vec3 start = position();
             double speed = getDeltaMovement().length();
-            double available = returning ? Double.POSITIVE_INFINITY : Math.max(0,
-                DiscPhysics.RANGE + DiscPhysics.rangeBonus(enchantmentLevel("range")) + bounces * DiscPhysics.BOUNCE_BONUS - distance);
-            double travelTime = Math.min(timeLeft, available / Math.max(speed, 1.0e-9));
-            Vec3 move = getDeltaMovement().scale(travelTime);
+            Vec3 move = getDeltaMovement().scale(timeLeft);
             Vec3 end = start.add(move);
             if (!server.hasChunk(BlockPos.containing(end).getX() >> 4, BlockPos.containing(end).getZ() >> 4)) { beginReturn(); return; }
             var hit = server.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER,
@@ -155,7 +163,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
             pierce(server, start, finish);
             distance += start.distanceTo(finish);
             setPos(finish);
-            if (!blocked) return;
+            if (!blocked) { needsSync = true; return; }
             Vec3 normal = Vec3.atLowerCornerOf(hit.getDirection().getUnitVec3i());
             setPos(finish.add(normal.scale(0.015)));
             setDeltaMovement(DiscPhysics.reflect(getDeltaMovement(), normal));
@@ -187,7 +195,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
         net.minecraft.world.entity.Mob nearest = null;
         double nearestDistance = 100;
         for (var mob : server.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, getBoundingBox().inflate(10),
-                e -> e.isAlive() && !e.isSpectator() && !hitThisPass.contains(e.getUUID()) && !e.isAlliedTo(getOwner()))) {
+                e -> e.isAlive() && !e.isSpectator() && !hitThisPass.contains(e.getUUID()) && (getOwner() == null || !e.isAlliedTo(getOwner())))) {
             if (mob instanceof net.minecraft.world.entity.TamableAnimal pet && pet.isTame()) continue;
             Vec3 target = mob.getBoundingBox().getCenter();
             Vec3 delta = target.subtract(position());
@@ -214,14 +222,14 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
     }
     private void flyHome(ServerPlayer player) {
         ServerLevel server = (ServerLevel)level();
-        Vec3 target = player.position().add(0, player.getBbHeight() * 0.7, 0);
+        Vec3 target = dispenser == null ? player.position().add(0, player.getBbHeight() * 0.7, 0) : Vec3.atCenterOf(dispenser);
         setDeltaMovement(DiscPhysics.home(getDeltaMovement(), target.subtract(position())));
         double timeLeft = 1;
         for (int step = 0; step < 4 && timeLeft > 1.0e-5; step++) {
             Vec3 start = position();
             double speed = getDeltaMovement().length();
             double available = returning ? Double.POSITIVE_INFINITY : Math.max(0,
-                DiscPhysics.RANGE + DiscPhysics.rangeBonus(enchantmentLevel("range")) + bounces * DiscPhysics.BOUNCE_BONUS - distance);
+                baseRange() + DiscPhysics.rangeBonus(enchantmentLevel("range")) + bounces * DiscPhysics.BOUNCE_BONUS - distance);
             double travelTime = Math.min(timeLeft, available / Math.max(speed, 1.0e-9));
             Vec3 move = getDeltaMovement().scale(travelTime);
             Vec3 end = start.add(move);
@@ -231,7 +239,9 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
             }
             var hit = server.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE, this));
-            boolean blocked = hit.getType() == HitResult.Type.BLOCK;
+            // Only the part of the return inside the eight-block destination sphere may phase.
+            boolean phase = returning && start.distanceToSqr(target) <= 64 && end.distanceToSqr(target) <= 64;
+            boolean blocked = hit.getType() == HitResult.Type.BLOCK && !phase;
             if (blocked && breakPot(server, hit)) {
                 Vec3 impact = hit.getLocation();
                 pierce(server, start, impact);
@@ -242,14 +252,14 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
             }
             Vec3 finish = blocked ? hit.getLocation() : end;
             // Clip movement before checking catch distance; never catch across a thin wall.
-            if (DiscPhysics.segmentWithin(start, finish, target, 0.8) && clearPath(start, target)) {
-                catchBy(player);
+            if (DiscPhysics.segmentWithin(start, finish, target, 0.8) && (start.distanceToSqr(target) <= 64 || clearPath(start, target))) {
+                if (dispenser == null) catchBy(player); else catchByDispenser(server);
                 return;
             }
             pierce(server, start, finish);
             setPos(finish);
             needsSync = true;
-            if (!blocked) return;
+            if (!blocked) { needsSync = true; return; }
             if (hit.isInside()) { dropStack(server); return; }
             Vec3 normal = Vec3.atLowerCornerOf(hit.getDirection().getUnitVec3i());
             setPos(finish.add(normal.scale(0.015)));
@@ -260,6 +270,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
     }
     private record Target(Entity entity, double distance) {}
     private void pierce(ServerLevel server, Vec3 start, Vec3 end) {
+        DiscHarvest.harvest(server, this, start, end);
         var targets = new ArrayList<Target>();
         for (Entity entity : server.getEntities(this, new AABB(start, end).inflate(0.3),
                 e -> (e instanceof LivingEntity || e instanceof net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball) && e.isAlive() && !e.isSpectator()
@@ -299,6 +310,15 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
                 if (motion.x*motion.x + motion.z*motion.z > 1.0e-8) living.knockback(knockback, -motion.x, -motion.z, damageSources().thrown(this, owner), damage);
             }
         }
+    }
+    private void catchByDispenser(ServerLevel server) {
+        if (!(server.getBlockEntity(dispenser) instanceof net.minecraft.world.level.block.entity.DispenserBlockEntity inventory)) { dropStack(server); return; }
+        int slot = originSlot >= 0 && originSlot < inventory.getContainerSize() && inventory.getItem(originSlot).isEmpty() ? originSlot : -1;
+        if (slot < 0) for (int i=0;i<inventory.getContainerSize();i++) if (inventory.getItem(i).isEmpty()) { slot=i; break; }
+        if (slot < 0) { dropStack(server); return; }
+        ItemStack stack = getItem(); setItem(ItemStack.EMPTY);
+        inventory.setItem(slot, stack); inventory.setChanged();
+        sound(SoundEvents.TRIDENT_RETURN,0.5F,1); discard();
     }
     public void catchBy(ServerPlayer player) {
         if (isRemoved() || getItem().isEmpty()) return;
@@ -340,6 +360,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
         super.addAdditionalSaveData(output);
         output.store("Disc", ItemStack.CODEC, getItem());
         output.storeNullable("Thrower", UUIDUtil.CODEC, thrower);
+        output.storeNullable("Dispenser", BlockPos.CODEC, dispenser);
         output.putInt("OriginSlot", originSlot);
         output.putInt("FlightAge", age);
         output.putInt("Bounces", bounces);
@@ -352,6 +373,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
         super.readAdditionalSaveData(input);
         setItem(input.read("Disc", ItemStack.CODEC).orElse(ItemStack.EMPTY));
         thrower = input.read("Thrower", UUIDUtil.CODEC).orElse(null);
+        dispenser = input.read("Dispenser", BlockPos.CODEC).orElse(null);
         originSlot = input.getIntOr("OriginSlot", -1);
         age = input.getIntOr("FlightAge", 0);
         bounces = input.getIntOr("Bounces", 0);

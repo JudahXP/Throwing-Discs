@@ -1,3 +1,7 @@
+# 1.4.0
+
+Smooth return arcs; eight-block return-only phasing; Harvest I; reusable dispenser throws; complete Ricochet enchantment removal; reference throw/melee/base-range values.
+
 # 1.3.1
 
 Fixed rounding-related outbound hovering; restored original held poses; exclusive Curve/Homing; Keen Edge III cap; Fire Aspect replaces Flame without projectile fire visuals; retired Ricochet enchantment and made 17.5% bounce acceleration default; reduced melee damage by 2.5 per tier; automatic legacy disc enchantment migration.

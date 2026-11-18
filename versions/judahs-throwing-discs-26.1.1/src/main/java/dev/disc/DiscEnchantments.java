@@ -15,19 +15,16 @@ public final class DiscEnchantments {
     }
     public static void normalize(ItemStack stack, Level level) {
         var registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        var ricochet = registry.getOrThrow(key("ricochet"));
         var keen = registry.getOrThrow(key("keen_edge"));
         var homing = registry.getOrThrow(key("homing"));
         var curve = registry.getOrThrow(key("curve"));
         var flame = registry.getOrThrow(Enchantments.FLAME);
         var fire = registry.getOrThrow(Enchantments.FIRE_ASPECT);
-        int oldRicochet = EnchantmentHelper.getItemEnchantmentLevel(ricochet,stack);
         int oldKeen = EnchantmentHelper.getItemEnchantmentLevel(keen,stack);
         int oldFlame = EnchantmentHelper.getItemEnchantmentLevel(flame,stack);
         boolean conflicting = EnchantmentHelper.getItemEnchantmentLevel(homing,stack)>0 && EnchantmentHelper.getItemEnchantmentLevel(curve,stack)>0;
-        if (oldRicochet==0 && oldKeen<=3 && oldFlame==0 && !conflicting) return;
+        if (oldKeen<=3 && oldFlame==0 && !conflicting) return;
         EnchantmentHelper.updateEnchantments(stack, mutable -> {
-            mutable.set(ricochet,0);
             if(oldKeen>3) mutable.set(keen,3);
             if(conflicting) mutable.set(curve,0);
             if(oldFlame>0) {

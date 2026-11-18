@@ -40,7 +40,7 @@ public class DiscGameTests {
         h.assertTrue(problems.isEmpty(),"Valid returning flight test setup");
     }
     @GameTest public void returnBouncesAndTimeoutDropsBehindWall(GameTestHelper h) {
-        var p=player(h);
+        var p=player(h);p.setPos(p.position().add(0,0,-12));
         h.setBlock(1,3,3,net.minecraft.world.level.block.Blocks.STONE);
         var disc=projectile(h,p);
         var start=net.minecraft.world.phys.Vec3.atBottomCenterOf(h.absolutePos(new net.minecraft.core.BlockPos(1,3,4))).add(0,0.25,0);
@@ -50,11 +50,6 @@ public class DiscGameTests {
         disc.tick();
         h.assertTrue(disc.getDeltaMovement().z>0,"Returning disc reflects from wall");
         double wallBack=h.absolutePos(new net.minecraft.core.BlockPos(1,3,4)).getZ();
-        for(int i=0;i<40 && !disc.isRemoved();i++) {
-            h.assertTrue(disc.getZ()>=wallBack,"Returning disc stays on its side of wall");
-            disc.tick();
-        }
-        h.assertTrue(!disc.isRemoved(),"Disc remains in flight rather than teleporting across wall");
         forceReturn(disc,h,DiscPhysics.MAX_FLIGHT_TICKS);
         disc.tick();
         h.assertTrue(disc.isRemoved(),"Trapped disc drops at timeout");
@@ -64,7 +59,7 @@ public class DiscGameTests {
         h.assertTrue(drops.size()==1 && drops.getFirst().getZ()>=wallBack,"Exactly one recoverable disc drops on the blocked side");
         h.succeed();
     }
-    @GameTest public void cannotCatchAcrossThinWall(GameTestHelper h) {
+    @GameTest public void returnsThroughNearbyThinWall(GameTestHelper h) {
         var p=player(h);
         var cell=net.minecraft.world.phys.Vec3.atLowerCornerOf(h.absolutePos(new net.minecraft.core.BlockPos(1,2,3)));
         p.setPos(cell.add(0.5,0,0.1));
@@ -74,10 +69,7 @@ public class DiscGameTests {
         disc.setDeltaMovement(new net.minecraft.world.phys.Vec3(0,0,-0.2));
         forceReturn(disc,h,20);
         disc.tick();
-        h.assertTrue(!disc.isRemoved() && p.getInventory().countItem(ModItems.get(DiscTier.IRON))==0,"Catch radius cannot reach through glass pane");
-        h.assertTrue(disc.getZ()>cell.z+0.5,"Disc stays outside pane");
-        DiscFlights.recover(p);
-        h.assertTrue(p.getInventory().countItem(ModItems.get(DiscTier.IRON))==0,"Disconnect/shutdown recovery cannot cross pane either");
+        h.assertTrue(disc.isRemoved() && p.getInventory().countItem(ModItems.get(DiscTier.IRON))==1,"Returning disc phases through a nearby pane and is caught");
         h.succeed();
     }
     @GameTest public void toolDurabilityAndThrowWear(GameTestHelper h) {
@@ -259,8 +251,8 @@ public class DiscGameTests {
         var registry=h.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT);
         var p=player(h);
         var d=projectile(h,p);
-        String[] names={"homing","range","curve","keen_edge"};
-        int[] levels={4,5,2,3};
+        String[] names={"homing","range","curve","keen_edge","harvest"};
+        int[] levels={4,5,2,3,1};
         for(int i=0;i<names.length;i++) {
             var key=net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENCHANTMENT,ThrowingDiscMod.id(names[i]));
             var enchantment=registry.getOrThrow(key);
@@ -321,12 +313,12 @@ public class DiscGameTests {
             if(level>0)d.getItem().enchant(enchantment,level);
             var reporter=new net.minecraft.util.ProblemReporter.Collector();
             var saved=net.minecraft.world.level.storage.TagValueOutput.createWithContext(reporter,h.getLevel().registryAccess());
-            d.addAdditionalSaveData(saved);saved.putDouble("Distance",12);
+            d.addAdditionalSaveData(saved);saved.putDouble("Distance",16);
             d.readAdditionalSaveData(net.minecraft.world.level.storage.TagValueInput.create(reporter,h.getLevel().registryAccess(),saved.buildResult()));
             d.setDeltaMovement(new net.minecraft.world.phys.Vec3(0,0,1.25));d.tick();
             var after=net.minecraft.world.level.storage.TagValueOutput.createWithContext(reporter,h.getLevel().registryAccess());d.addAdditionalSaveData(after);
             var input=net.minecraft.world.level.storage.TagValueInput.create(reporter,h.getLevel().registryAccess(),after.buildResult());
-            h.assertTrue(input.getBooleanOr("Returning",false)==(level==0),"Range enchantment extends outbound flight beyond twelve blocks");
+            h.assertTrue(input.getBooleanOr("Returning",false)==(level==0),"Range enchantment extends outbound flight beyond sixteen blocks");
             d.discard();
         }
         h.succeed();
@@ -372,15 +364,15 @@ public class DiscGameTests {
         h.assertTrue(fireball.getOwner()==p,"Reflected fireball credits the thrower");
         fireball.discard();d.catchBy(p);h.succeed();
     }
-    @GameTest public void meleeDamageIsShovelMinusTwoPointFive(GameTestHelper h) {
+    @GameTest public void meleeMatchesReference(GameTestHelper h) {
         var shovels=new net.minecraft.world.item.Item[]{Items.COPPER_SHOVEL,Items.IRON_SHOVEL,Items.GOLDEN_SHOVEL,Items.DIAMOND_SHOVEL,Items.NETHERITE_SHOVEL};
         for(var tier:DiscTier.values()) {
             var disc=new ItemStack(ModItems.get(tier)).get(DataComponents.ATTRIBUTE_MODIFIERS);
             var shovel=new ItemStack(shovels[tier.ordinal()]).get(DataComponents.ATTRIBUTE_MODIFIERS);
             for(var entry:shovel.modifiers()) {
                 double actual=disc.modifiers().stream().filter(e->e.attribute().equals(entry.attribute())).findFirst().orElseThrow().modifier().amount();
-                double reduction=entry.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)?2.5:0;
-                h.assertTrue(Math.abs(actual-(entry.modifier().amount()-reduction))<1e-8,"Melee damage is shovel minus 2.5; speed unchanged");
+                double expected=entry.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)?tier.melee-1:-3;
+                h.assertTrue(Math.abs(actual-expected)<1e-8,"Melee damage matches reference; speed unchanged");
             }
         }
         h.succeed();
@@ -427,7 +419,7 @@ public class DiscGameTests {
         d.setPos(d.position().add(0,0,12));d.setDeltaMovement(new net.minecraft.world.phys.Vec3(0,0,1.25));
         var reporter=new net.minecraft.util.ProblemReporter.Collector();
         var saved=net.minecraft.world.level.storage.TagValueOutput.createWithContext(reporter,h.getLevel().registryAccess());
-        d.addAdditionalSaveData(saved);saved.putDouble("Distance",Math.nextDown(12.0));
+        d.addAdditionalSaveData(saved);saved.putDouble("Distance",Math.nextDown(16.0));
         d.readAdditionalSaveData(net.minecraft.world.level.storage.TagValueInput.create(reporter,h.getLevel().registryAccess(),saved.buildResult()));
         d.tick();
         var after=net.minecraft.world.level.storage.TagValueOutput.createWithContext(reporter,h.getLevel().registryAccess());d.addAdditionalSaveData(after);
@@ -456,14 +448,14 @@ public class DiscGameTests {
     @GameTest public void migratesOldEnchantedDiscs(GameTestHelper h) {
         var registry=h.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT);
         var stack=new ItemStack(ModItems.get(DiscTier.IRON));
-        for(String name:new String[]{"homing","curve","keen_edge","ricochet"}) {
+        for(String name:new String[]{"homing","curve","keen_edge"}) {
             var holder=registry.getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENCHANTMENT,ThrowingDiscMod.id(name)));
             stack.enchant(holder,name.equals("keen_edge")?5:1);
         }
         stack.enchant(registry.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.FLAME),1);
         DiscEnchantments.normalize(stack,h.getLevel());
         var p=player(h);var d=new ThrowingDiscEntity(ModEntities.DISC,h.getLevel());d.launch(p,stack,2);
-        h.assertTrue(d.enchantmentLevel("keen_edge")==3 && d.enchantmentLevel("ricochet")==0,"Legacy Keen Edge clamps to III and Ricochet is removed");
+        h.assertTrue(d.enchantmentLevel("keen_edge")==3,"Legacy Keen Edge clamps to III");
         h.assertTrue(d.enchantmentLevel("homing")==1 && d.enchantmentLevel("curve")==0,"Legacy dual steering keeps Homing");
         h.assertTrue(net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(registry.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.FIRE_ASPECT),d.getItem())==1,"Old Flame becomes Fire Aspect I");
         h.assertTrue(!d.isOnFire() && !d.displayFireAnimation(),"Migrated disc has no fire overlay");
@@ -478,5 +470,66 @@ public class DiscGameTests {
         for(int i=0;i<100 && !d.isRemoved();i++) d.tick();
         h.assertTrue(d.isRemoved() && p.getInventory().getItem(2).is(ModItems.get(DiscTier.IRON)),"A stopped disc returns instead of hovering until timeout");
         h.succeed();
+    }
+
+    @GameTest public void ricochetIsNotRegistered(GameTestHelper h) {
+        var registry=h.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT);
+        h.assertTrue(registry.get(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENCHANTMENT,ThrowingDiscMod.id("ricochet"))).isEmpty(),"Ricochet has no registry entry, book or command option");
+        h.succeed();
+    }
+    @GameTest public void harvestDropsRipeCropsAndPreservesYoungCrops(GameTestHelper h) {
+        var p=player(h);var d=projectile(h,p);
+        var registry=h.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT);
+        d.getItem().enchant(registry.getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENCHANTMENT,ThrowingDiscMod.id("harvest"))),1);
+        h.setBlock(1,1,2,net.minecraft.world.level.block.Blocks.FARMLAND);
+        h.setBlock(1,1,3,net.minecraft.world.level.block.Blocks.FARMLAND);
+        h.setBlock(1,2,2,net.minecraft.world.level.block.Blocks.WHEAT.defaultBlockState().setValue(net.minecraft.world.level.block.CropBlock.AGE,7));
+        h.setBlock(1,2,3,net.minecraft.world.level.block.Blocks.WHEAT);
+        var start=net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(new net.minecraft.core.BlockPos(1,2,1)));
+        DiscHarvest.harvest(h.getLevel(),d,start,start.add(0,0,3));
+        h.assertTrue(h.getBlockState(new net.minecraft.core.BlockPos(1,2,2)).isAir(),"Mature wheat breaks");
+        h.assertTrue(h.getBlockState(new net.minecraft.core.BlockPos(1,2,3)).is(net.minecraft.world.level.block.Blocks.WHEAT),"Young wheat remains");
+        var drops=h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(start,start.add(0,0,3)).inflate(2),e->e.getItem().is(Items.WHEAT));
+        h.assertTrue(!drops.isEmpty(),"Harvest drops wheat");d.discard();h.succeed();
+    }
+    @GameTest public void dispenserRecoversDiscForReuse(GameTestHelper h) {
+        var pos=h.absolutePos(new net.minecraft.core.BlockPos(1,5,1));
+        h.getLevel().setBlock(pos,net.minecraft.world.level.block.Blocks.DISPENSER.defaultBlockState(),3);
+        var inventory=(net.minecraft.world.level.block.entity.DispenserBlockEntity)h.getLevel().getBlockEntity(pos);
+        for(int attempt=0;attempt<2;attempt++) {
+            var stack=attempt==0?new ItemStack(ModItems.get(DiscTier.IRON)):inventory.getItem(2);
+            h.assertTrue(!stack.isEmpty(),"Previous return supplies the next throw");
+            inventory.setItem(2,stack);
+            var state=net.minecraft.world.level.block.Blocks.DISPENSER.defaultBlockState().setValue(net.minecraft.world.level.block.DispenserBlock.FACING,net.minecraft.core.Direction.SOUTH);
+            h.getLevel().setBlock(pos,state,3);
+            var behavior=net.minecraft.world.level.block.DispenserBlock.DISPENSER_REGISTRY.get(ModItems.get(DiscTier.IRON));
+            var remainder=behavior.dispense(new net.minecraft.core.dispenser.BlockSource(h.getLevel(),pos,state,inventory),stack);
+            inventory.setItem(2,remainder);
+            var flights=h.getLevel().getEntitiesOfClass(ThrowingDiscEntity.class,new net.minecraft.world.phys.AABB(pos).inflate(2),e->!e.isRemoved());
+            h.assertTrue(flights.size()==1 && remainder.isEmpty(),"Registered dispenser behavior transfers exactly one disc");
+            var d=flights.getFirst();
+            for(int dz=-32;dz<=48;dz+=16) h.getLevel().getChunk(pos.offset(0,0,dz));
+            for(int tick=0;tick<200 && !d.isRemoved();tick++) d.tick();
+            h.assertTrue(d.isRemoved() && inventory.getItem(2).is(ModItems.get(DiscTier.IRON)),"Disc returns to dispenser without duplication");
+            h.assertTrue(inventory.getItem(2).getDamageValue()==attempt+1,"Every dispenser throw consumes one durability");
+        }
+        h.succeed();
+    }
+    @GameTest public void outboundCannotPhaseNearOwner(GameTestHelper h) {
+        var p=player(h);var d=projectile(h,p);
+        h.setBlock(1,3,3,net.minecraft.world.level.block.Blocks.STONE);
+        var start=net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(new net.minecraft.core.BlockPos(1,3,2)));
+        d.setPos(start);d.setDeltaMovement(new net.minecraft.world.phys.Vec3(0,0,1.25));d.tick();
+        h.assertTrue(d.getDeltaMovement().z<0,"Outbound disc bounces even within eight blocks of owner");
+        d.discard();h.succeed();
+    }
+    @GameTest public void returnStillCollidesOutsideEightBlocks(GameTestHelper h) {
+        var p=player(h);p.setPos(p.position().add(0,0,-8));
+        h.setBlock(1,3,3,net.minecraft.world.level.block.Blocks.STONE);
+        var d=projectile(h,p);
+        d.setPos(net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(new net.minecraft.core.BlockPos(1,3,4))));
+        d.setDeltaMovement(new net.minecraft.world.phys.Vec3(0,0,-1.25));forceReturn(d,h,20);d.tick();
+        h.assertTrue(d.getDeltaMovement().z>0,"Returning disc bounces outside the eight-block sphere");
+        d.discard();h.succeed();
     }
 }

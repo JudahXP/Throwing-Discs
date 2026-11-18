@@ -11,6 +11,7 @@ public final class ThrowingDiscMod implements ModInitializer {
     @Override public void onInitialize() {
         ModItems.initialize();
         ModEntities.initialize();
+        DiscDispense.initialize();
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
             DiscFlights.recover(handler.player));
         ServerLifecycleEvents.SERVER_STOPPING.register(server ->

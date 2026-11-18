@@ -1,29 +1,24 @@
-# Judah’s Throwing Discs
+# Judah’s Throwing Discs 1.4.0
 
-[Download all mod JARs](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.3.1-all-versions.zip) · [Download complete source](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.3.1-all-sources.zip)
+[Download all mod JARs](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.4.0-all-versions.zip) · [Download complete source](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.4.0-all-sources.zip)
 
-Judah's Throwing Discs 1.3.1 — JudahXP
+Judah's Throwing Discs 1.4.0 — JudahXP
 
-Install only the JAR matching your Minecraft version, on both client and server. Replace the previous throwing_disc mod. Fabric Loader 0.19.5+ and matching Fabric API are required. Minecraft 26.x requires Java 25; 1.21.11 requires Java 21 to play.
+Supports Minecraft 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and 26.3. Install only the JAR matching your version, replacing the old mod on both client and server. Fabric Loader 0.19.5+ and matching Fabric API required. Java 21 for 1.21.11; Java 25 for 26.x.
 
-Changes:
-- Fix hovering at the outbound range boundary and return when outbound velocity stops.
-- Restore the original held pose.
-- Make Curve and Homing mutually exclusive.
-- Cap Keen Edge at III.
-- Replace Flame with Fire Aspect I–II without a burning projectile effect.
-- Retire Ricochet enchantment; all discs gain 17.5% speed per bounce, capped at 3 blocks/tick.
-- Reduce melee damage by 2.5 per tier: copper 1, iron 2, gold 0, diamond 3, netherite 4. Thrown base damage is unchanged.
-- Automatically migrate existing discs: remove Ricochet, cap Keen Edge, convert Flame, keep Homing when both steering enchantments exist. A hidden inert Ricochet definition preserves decoding of older saves.
+Smooth arcing return flight; block phasing only while returning and within eight blocks of the destination; Harvest I; reusable dispenser throws; complete Ricochet enchantment removal. Only throw damage, melee damage and base range changed from the reference image. Other tier values and Range enchantment bonuses are unchanged.
 
-Textures, crafting, durability, and the 12-block base range from 1.3.0 are preserved.
+Tier: thrown damage / melee damage / base range
+Copper: 5 / 3 / 14
+Iron: 6 / 4 / 16
+Gold: 5 / 3 / 18
+Diamond: 7.5 / 5 / 19
+Netherite: 8.5 / 6 / 21
 
-Validation:
-Minecraft 1.21.11: clean build, 9 unit tests, 28 required game tests passed.
-Minecraft 26.1: clean build, 9 unit tests, 28 required game tests passed.
-Minecraft 26.1.1: clean build, 9 unit tests, 28 required game tests passed.
-Minecraft 26.1.2: clean build, 9 unit tests, 28 required game tests passed.
-Minecraft 26.2: clean build, 9 unit tests, 28 required game tests passed.
-Minecraft 26.3: clean build, 9 unit tests, 28 required game tests passed.
+Harvest breaks mature wheat, carrots, potatoes, beetroot, nether wart, cocoa, melons and pumpkins, plus upper sugar cane and bamboo. Young crops and the bottom cane/bamboo block remain. Vanilla drops; no automatic replanting. Dispensers recover returning discs in an empty slot for the next redstone activation. Missing/full dispensers drop the item; throws consume durability.
 
-Graphical playtesting was not performed.
+UPGRADING: Back up your world. Let version 1.3.1 remove retired Ricochet from carried discs before installing 1.4.0; remove old Ricochet books. This version has no Ricochet registry entry, so stacks still referencing it may fail to decode correctly.
+
+All six clean builds passed 11 unit tests and 33 required game tests each. Visual playtesting was not performed.
+
+Complete per-version projects, instructions and validation reports are in `versions/`.

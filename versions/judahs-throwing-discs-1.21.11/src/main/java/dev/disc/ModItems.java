@@ -22,7 +22,7 @@ public final class ModItems {
             properties.attributes(net.minecraft.world.item.component.ItemAttributeModifiers.builder()
                 .add(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE,
                     new net.minecraft.world.entity.ai.attributes.AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID,
-                        tier.material.attackDamageBonus() - 1.0, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
+                        tier.melee - 1.0, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
                     net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND)
                 .add(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED,
                     new net.minecraft.world.entity.ai.attributes.AttributeModifier(Item.BASE_ATTACK_SPEED_ID,

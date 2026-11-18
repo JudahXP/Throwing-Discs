@@ -1,9 +1,9 @@
 {
   "description": {
-    "translate": "enchantment.throwing_disc.ricochet"
+    "translate": "enchantment.throwing_disc.harvest"
   },
-  "supported_items": [],
-  "primary_items": [],
+  "supported_items": "#throwing_disc:discs",
+  "primary_items": "#throwing_disc:discs",
   "weight": 3,
   "max_level": 1,
   "min_cost": {
