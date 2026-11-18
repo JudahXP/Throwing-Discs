@@ -70,12 +70,14 @@ class DiscPhysicsTest {
         }
         assertEquals(velocity,DiscPhysics.steer(velocity,target,0));
     }
-    @Test void returnTurnsWithoutStoppingOrReversingInstantly() {
+    @Test void directReturnEasesWithoutSidewaysArc() {
         Vec3 velocity=new Vec3(0,0,1.25);
         Vec3 next=DiscPhysics.home(velocity,new Vec3(0,0,-16));
-        assertTrue(next.length()>=velocity.length());
-        assertTrue(next.z>0);
-        assertTrue(Math.acos(next.normalize().dot(velocity.normalize()))<=Math.toRadians(18.001));
+        assertEquals(0,next.x,1e-10);assertEquals(0,next.y,1e-10);
+        assertTrue(next.z>0 && next.z<velocity.z);
+        assertTrue(next.subtract(velocity).length()<=0.300001);
+        for(int i=0;i<20;i++) next=DiscPhysics.home(next,new Vec3(0,0,-16));
+        assertTrue(next.z<0,"Disc reverses smoothly toward owner");
     }
     @Test void returningDiscConvergesFromNearbyHeadings() {
         for(double distance : new double[]{1,2,4,8,16,32}) for(int degrees=0;degrees<360;degrees+=30) {

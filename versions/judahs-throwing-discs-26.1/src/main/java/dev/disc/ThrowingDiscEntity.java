@@ -165,7 +165,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
             setDeltaMovement(DiscPhysics.reflect(getDeltaMovement(), normal));
             needsSync = true;
             sound(SoundEvents.TRIDENT_HIT_GROUND, 0.65F, 1.0F);
-            if (++bounces >= DiscPhysics.MAX_BOUNCES) { beginReturn(); return; }
+            bounces++;
             timeLeft -= start.distanceTo(finish) / Math.max(speed, 1.0e-9);
         }
     }

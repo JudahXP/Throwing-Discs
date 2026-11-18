@@ -1,3 +1,7 @@
+# 1.4.1
+
+Restored direct homing with bounded acceleration for a smooth reversal; removed the bounce-count limit. Piercing remains unlimited across distinct targets. Tier ranges and eight-block return-only phasing are unchanged.
+
 # 1.4.0
 
 Smooth return arcs; eight-block return-only phasing; Harvest I; reusable dispenser throws; complete Ricochet enchantment removal; reference throw/melee/base-range values.

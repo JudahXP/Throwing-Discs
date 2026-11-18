@@ -168,7 +168,8 @@ public class DiscGameTests {
         h.succeed();
     }
     @GameTest public void completesFlightAndReturnsToOriginalSlot(GameTestHelper h) {
-        var p = player(h);
+        var p = player(h);p.setPos(p.position().add(0,30,0));
+        for(int dz=-32;dz<=48;dz+=16) h.getLevel().getChunk(net.minecraft.core.BlockPos.containing(p.position().add(0,0,dz)));
         var d = projectile(h,p);
         d.setDeltaMovement(new net.minecraft.world.phys.Vec3(0,0,1.25));
         for (int tick=0;tick<120 && !d.isRemoved();tick++) d.tick();
@@ -530,6 +531,21 @@ public class DiscGameTests {
         d.setPos(net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(new net.minecraft.core.BlockPos(1,3,4))));
         d.setDeltaMovement(new net.minecraft.world.phys.Vec3(0,0,-1.25));forceReturn(d,h,20);d.tick();
         h.assertTrue(d.getDeltaMovement().z>0,"Returning disc bounces outside the eight-block sphere");
+        d.discard();h.succeed();
+    }
+    @GameTest public void bouncesBeyondFormerLimit(GameTestHelper h) {
+        var p=player(h);var d=projectile(h,p);
+        h.setBlock(1,3,3,net.minecraft.world.level.block.Blocks.STONE);
+        d.setPos(net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(new net.minecraft.core.BlockPos(1,3,2))));
+        d.setDeltaMovement(new net.minecraft.world.phys.Vec3(0,0,1.25));
+        var reporter=new net.minecraft.util.ProblemReporter.Collector();
+        var saved=net.minecraft.world.level.storage.TagValueOutput.createWithContext(reporter,h.getLevel().registryAccess());
+        d.addAdditionalSaveData(saved);saved.putInt("Bounces",8);
+        d.readAdditionalSaveData(net.minecraft.world.level.storage.TagValueInput.create(reporter,h.getLevel().registryAccess(),saved.buildResult()));
+        d.tick();
+        var after=net.minecraft.world.level.storage.TagValueOutput.createWithContext(reporter,h.getLevel().registryAccess());d.addAdditionalSaveData(after);
+        var input=net.minecraft.world.level.storage.TagValueInput.create(reporter,h.getLevel().registryAccess(),after.buildResult());
+        h.assertTrue(input.getIntOr("Bounces",0)>8 && !input.getBooleanOr("Returning",false),"Ninth bounce does not force return");
         d.discard();h.succeed();
     }
 }

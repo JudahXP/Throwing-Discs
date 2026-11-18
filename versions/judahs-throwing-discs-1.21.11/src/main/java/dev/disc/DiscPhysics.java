@@ -6,7 +6,6 @@ public final class DiscPhysics {
     public static final double SPEED = 1.25;
     public static final double RANGE = 12;
     public static final double BOUNCE_BONUS = 12;
-    public static final int MAX_BOUNCES = 8;
     public static final int MAX_OUTBOUND_TICKS = 160;
     public static final int MAX_FLIGHT_TICKS = 320;
     public static final double RICOCHET_ACCELERATION = 1.175;
@@ -17,23 +16,13 @@ public final class DiscPhysics {
             reflected.length() * RICOCHET_ACCELERATION));
     }
     public static Vec3 home(Vec3 velocity, Vec3 displacement) {
-        double wantedSpeed = Math.clamp(displacement.length() * 0.4, 0.35, 2.25);
-        double speed = Math.max(0.35, velocity.length() + Math.clamp(wantedSpeed - velocity.length(), -0.12, 0.06));
-        if (displacement.lengthSqr() < 1.0e-10) return velocity;
-        Vec3 desired = displacement.normalize();
-        if (velocity.lengthSqr() < 1.0e-10) return desired.scale(speed);
-        Vec3 forward = velocity.normalize();
-        double angle = Math.acos(Math.clamp(forward.dot(desired), -1, 1));
-        double turn = Math.min(angle, Math.toRadians(displacement.length() < 8 ? 36 : 18));
-        if (angle < 1.0e-6) return desired.scale(speed);
-        Vec3 axis = forward.cross(desired);
-        if (axis.lengthSqr() < 1.0e-8) {
-            axis = forward.cross(new Vec3(0,1,0));
-            if (axis.lengthSqr() < 1.0e-8) axis = forward.cross(new Vec3(1,0,0));
-        }
-        axis = axis.normalize();
-        return forward.scale(Math.cos(turn)).add(axis.cross(forward).scale(Math.sin(turn)))
-            .normalize().scale(speed);
+        if (displacement.lengthSqr() < 1.0e-10) return velocity.scale(0.75);
+        double speed = Math.clamp(displacement.length() * 0.4, 0.35, 2.25);
+        Vec3 desired = displacement.normalize().scale(speed);
+        // Ease toward the owner directly; never introduce a sideways U-turn arc.
+        Vec3 change = desired.subtract(velocity).scale(0.25);
+        if (change.lengthSqr() > 0.09) change = change.normalize().scale(0.3);
+        return velocity.add(change);
     }
     public static boolean segmentWithin(Vec3 a, Vec3 b, Vec3 point, double radius) {
         Vec3 delta = b.subtract(a);
