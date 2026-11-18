@@ -1,3 +1,7 @@
+# Judah’s Throwing Discs
+
+[Download all mod JARs](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.3.1-all-versions.zip) · [Download complete source](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.3.1-all-sources.zip)
+
 Judah's Throwing Discs 1.3.1 — JudahXP
 
 Install only the JAR matching your Minecraft version, on both client and server. Replace the previous throwing_disc mod. Fabric Loader 0.19.5+ and matching Fabric API are required. Minecraft 26.x requires Java 25; 1.21.11 requires Java 21 to play.
