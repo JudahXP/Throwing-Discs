@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "throwing_disc:copper_throwing_disc",
+    "throwing_disc:iron_throwing_disc",
+    "throwing_disc:gold_throwing_disc",
+    "throwing_disc:diamond_throwing_disc",
+    "throwing_disc:netherite_throwing_disc"
+  ]
+}
