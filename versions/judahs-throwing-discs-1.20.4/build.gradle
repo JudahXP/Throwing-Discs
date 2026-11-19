@@ -1,0 +1,51 @@
+plugins {
+ id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+}
+version = project.mod_version
+group = project.group
+base { archivesName = 'judahs-throwing-discs' }
+loom {
+ splitEnvironmentSourceSets()
+ mods { throwing_disc { sourceSet sourceSets.main; sourceSet sourceSets.client } }
+}
+dependencies {
+ mappings loom.officialMojangMappings()
+ minecraft "com.mojang:minecraft:${project.minecraft_version}"
+ modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+ modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+processResources {
+ inputs.property 'version', project.version
+ filesMatching('fabric.mod.json') { expand 'version': project.version }
+}
+tasks.withType(JavaCompile).configureEach { options.release = 17 }
+java {
+ sourceCompatibility = JavaVersion.VERSION_17
+ targetCompatibility = JavaVersion.VERSION_17
+ withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach { options.compilerArgs += ['-Xlint:deprecation'] }
+
+repositories { mavenCentral() }
+dependencies {
+ testImplementation platform('org.junit:junit-bom:5.12.2')
+ testImplementation 'org.junit.jupiter:junit-jupiter'
+ testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+test { useJUnitPlatform() }
+
+fabricApi {
+ configureTests {
+  createSourceSet = true
+  modId = 'throwing_disc_test'
+  enableGameTests = true
+  enableClientGameTests = false
+  eula = false
+ }
+}
+
+jar { from('LICENSE') { rename { "LICENSE_throwing_disc" } } }
+
+// Loom runs with JDK 25; the mod and its tests target Minecraft's Java 21 runtime.
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "dev.disc.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "DiscAnvilMixin",
+    "DiscEnchantmentMixin",
+    "DiscEnchantingTableMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

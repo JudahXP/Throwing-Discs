@@ -1,0 +1,17 @@
+{
+  "entity.throwing_disc.throwing_disc": "Throwing Disc",
+  "message.throwing_disc.in_flight": "Disc in flight",
+  "item.throwing_disc.iron_throwing_disc": "Iron Throwing Disc",
+  "item.throwing_disc.gold_throwing_disc": "Golden Throwing Disc",
+  "item.throwing_disc.diamond_throwing_disc": "Diamond Throwing Disc",
+  "item.throwing_disc.netherite_throwing_disc": "Netherite Throwing Disc",
+  "tag.item.throwing_disc.throwing_discs": "Throwing Discs",
+  "enchantment.throwing_disc.homing": "Homing",
+  "enchantment.throwing_disc.range": "Range",
+  "tag.item.throwing_disc.discs": "Throwing Discs",
+  "enchantment.throwing_disc.curve": "Curve",
+  "enchantment.throwing_disc.keen_edge": "Keen Edge",
+  "tag.item.throwing_disc.knockback_enchantable": "Knockback Enchantable",
+  "tag.item.throwing_disc.fire_aspect_enchantable": "Fire Aspect Enchantable",
+  "enchantment.throwing_disc.harvest": "Harvest"
+}
