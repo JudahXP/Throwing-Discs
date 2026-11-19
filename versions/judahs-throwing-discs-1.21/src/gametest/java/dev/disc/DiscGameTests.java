@@ -85,7 +85,7 @@ public class DiscGameTests implements FabricGameTest {
             item.use(h.getLevel(),p,InteractionHand.MAIN_HAND);
             DiscFlights.recover(p);
             check(h,p.getMainHandItem().getDamageValue()==1,"One successful throw costs one durability");
-            p.getCooldowns().removeCooldown(p.getCooldowns().getCooldownGroup(p.getMainHandItem()));
+            p.getCooldowns().removeCooldown(p.getMainHandItem().getItem());
         }
         var lastUse=new ItemStack(ModItems.get(DiscTier.GOLD));
         lastUse.setDamageValue(lastUse.getMaxDamage()-1);
@@ -200,14 +200,14 @@ public class DiscGameTests implements FabricGameTest {
             var items = new java.util.ArrayList<ItemStack>(java.util.Collections.nCopies(9,ItemStack.EMPTY));
             for (int slot : new int[]{1,3,5,7}) items.set(slot,new ItemStack(materials[i]));
             var input = net.minecraft.world.item.crafting.CraftingInput.of(3,3,items);
-            var recipe = h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,input,h.getLevel()).orElseThrow();
+            var recipe = h.getLevel().getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,input,h.getLevel()).orElseThrow();
             check(h,recipe.value().assemble(input,h.getLevel().registryAccess()).is(ModItems.get(DiscTier.values()[i])), "Correct crafting output for " + DiscTier.values()[i]);
         }
         var diamond = new ItemStack(ModItems.get(DiscTier.DIAMOND));
         diamond.set(DataComponents.CUSTOM_NAME, Component.literal("Upgrade me"));
         var input = new net.minecraft.world.item.crafting.SmithingRecipeInput(
             new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),diamond,new ItemStack(Items.NETHERITE_INGOT));
-        var recipe = h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.SMITHING,input,h.getLevel()).orElseThrow();
+        var recipe = h.getLevel().getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.SMITHING,input,h.getLevel()).orElseThrow();
         var result = recipe.value().assemble(input,h.getLevel().registryAccess());
         check(h,result.is(ModItems.get(DiscTier.NETHERITE)), "Smithing upgrades diamond to netherite");
         check(h,Component.literal("Upgrade me").equals(result.get(DataComponents.CUSTOM_NAME)), "Smithing preserves custom components");
@@ -237,7 +237,7 @@ public class DiscGameTests implements FabricGameTest {
         disc.use(h.getLevel(), p, InteractionHand.OFF_HAND);
         DiscFlights.recover(p);
         check(h,p.getOffhandItem().is(disc), "Offhand catches into offhand");
-        p.getCooldowns().removeCooldown(p.getCooldowns().getCooldownGroup(p.getOffhandItem()));
+        p.getCooldowns().removeCooldown(p.getOffhandItem().getItem());
         disc.use(h.getLevel(), p, InteractionHand.OFF_HAND);
         p.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.STICK));
         DiscFlights.recover(p);
@@ -258,7 +258,7 @@ public class DiscGameTests implements FabricGameTest {
             check(h,enchantment.value().getMaxLevel()==levels[i],"Correct maximum enchantment level");
             for(var tier:DiscTier.values()) check(h,enchantment.value().canEnchant(new ItemStack(ModItems.get(tier))),"Enchantment accepts every disc tier");
             check(h,!enchantment.value().canEnchant(new ItemStack(Items.DIAMOND_SWORD)),"Disc enchantments reject swords");
-            var book=net.minecraft.world.item.enchantment.EnchantmentHelper.createBook(new net.minecraft.world.item.enchantment.EnchantmentInstance(enchantment,levels[i]));
+            var book=net.minecraft.world.item.EnchantedBookItem.createForEnchantment(new net.minecraft.world.item.enchantment.EnchantmentInstance(enchantment,levels[i]));
             check(h,book.is(Items.ENCHANTED_BOOK),"Uses vanilla enchanted books");
             var anvil=new net.minecraft.world.inventory.AnvilMenu(0,p.getInventory());
             anvil.getSlot(0).set(new ItemStack(ModItems.get(DiscTier.IRON)));
@@ -328,13 +328,13 @@ public class DiscGameTests implements FabricGameTest {
         for(var key:java.util.List.of(net.minecraft.world.item.enchantment.Enchantments.PROTECTION,net.minecraft.world.item.enchantment.Enchantments.POWER,net.minecraft.world.item.enchantment.Enchantments.EFFICIENCY,net.minecraft.world.item.enchantment.Enchantments.FLAME)) {
             var anvil=new net.minecraft.world.inventory.AnvilMenu(0,p.getInventory());
             anvil.getSlot(0).set(new ItemStack(ModItems.get(DiscTier.IRON)));
-            anvil.getSlot(1).set(net.minecraft.world.item.enchantment.EnchantmentHelper.createBook(new net.minecraft.world.item.enchantment.EnchantmentInstance(registry.getOrThrow(key),1)));
+            anvil.getSlot(1).set(net.minecraft.world.item.EnchantedBookItem.createForEnchantment(new net.minecraft.world.item.enchantment.EnchantmentInstance(registry.getOrThrow(key),1)));
             anvil.createResult();check(h,anvil.getSlot(2).getItem().isEmpty(),"Incompatible books cannot be applied even in creative");
         }
         for(var key:java.util.List.of(net.minecraft.world.item.enchantment.Enchantments.FIRE_ASPECT,net.minecraft.world.item.enchantment.Enchantments.KNOCKBACK)) {
             var anvil=new net.minecraft.world.inventory.AnvilMenu(0,p.getInventory());
             anvil.getSlot(0).set(new ItemStack(ModItems.get(DiscTier.IRON)));
-            anvil.getSlot(1).set(net.minecraft.world.item.enchantment.EnchantmentHelper.createBook(new net.minecraft.world.item.enchantment.EnchantmentInstance(registry.getOrThrow(key),1)));
+            anvil.getSlot(1).set(net.minecraft.world.item.EnchantedBookItem.createForEnchantment(new net.minecraft.world.item.enchantment.EnchantmentInstance(registry.getOrThrow(key),1)));
             anvil.createResult();check(h,!anvil.getSlot(2).getItem().isEmpty(),"Fire Aspect and Knockback books work");
         }
         h.succeed();
@@ -432,7 +432,7 @@ public class DiscGameTests implements FabricGameTest {
             for(boolean reverse:new boolean[]{false,true}) {
                 var stack=new ItemStack(ModItems.get(DiscTier.IRON));stack.enchant(reverse?curve:homing,1);
                 var anvil=new net.minecraft.world.inventory.AnvilMenu(0,p.getInventory());anvil.getSlot(0).set(stack);
-                anvil.getSlot(1).set(net.minecraft.world.item.enchantment.EnchantmentHelper.createBook(new net.minecraft.world.item.enchantment.EnchantmentInstance(reverse?homing:curve,1)));
+                anvil.getSlot(1).set(net.minecraft.world.item.EnchantedBookItem.createForEnchantment(new net.minecraft.world.item.enchantment.EnchantmentInstance(reverse?homing:curve,1)));
                 anvil.createResult();check(h,anvil.getSlot(2).getItem().isEmpty(),"Cannot combine Curve and Homing in either order or game mode");
             }
         }

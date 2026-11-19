@@ -39,6 +39,6 @@ Headless automated checks only. Graphical playtesting and multiplayer latency te
  with zipfile.ZipFile(out/(name+'-source.zip'),'w',zipfile.ZIP_DEFLATED)as z:
   for p in sorted(r.rglob('*')):
    rel=p.relative_to(r)
-   if p.is_file()and not any(x in {'.git','.gradle','build','run'}for x in rel.parts):z.write(p,Path(r.name)/rel)
+   if p.is_file()and not any(x in {'.git','.gradle','build','run','logs','crash-reports'}for x in rel.parts):z.write(p,Path(r.name)/rel)
  (out/f'validation-{v}.json').write_text(json.dumps({'minecraft':v,'unit_tests':count,'game_tests':int(m[1]),'java_target':java,'copper':copper,'jar_sha256':hashlib.sha256(jars[0].read_bytes()).hexdigest()},indent=2)+'\n')
  print(v,'packaged')

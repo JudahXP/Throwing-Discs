@@ -354,7 +354,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
     }
     @Override protected void addAdditionalSaveData(CompoundTag output) {
         super.addAdditionalSaveData(output);
-        output.store("Disc", ItemStack.CODEC, registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE), getItem());
+        if(!getItem().isEmpty()) output.store("Disc", ItemStack.CODEC, registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE), getItem());
         output.storeNullable("Thrower", UUIDUtil.CODEC, thrower);
         output.storeNullable("Dispenser", BlockPos.CODEC, dispenser);
         output.putInt("OriginSlot", originSlot);
