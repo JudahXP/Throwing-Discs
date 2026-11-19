@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  @Inject(method="createResult",at=@At("RETURN")) private void disc$restrict(CallbackInfo ci){
   var menu=(AnvilMenu)(Object)this;var disc=menu.getSlot(0).getItem();var book=menu.getSlot(1).getItem();if(!(disc.getItem() instanceof ThrowingDiscItem))return;
   var applied=EnchantmentHelper.getEnchantmentsForCrafting(menu.getSlot(2).getItem()).keySet();
-  for(var a:applied)for(var b:applied)if(a!=b&&!a.isCompatibleWith(b)){menu.getSlot(2).set(ItemStack.EMPTY);return;}
-  if(book.is(Items.ENCHANTED_BOOK))for(var e:EnchantmentHelper.getEnchantmentsForCrafting(book).keySet())if(!DiscEnchantments.allowed(e)){menu.getSlot(2).set(ItemStack.EMPTY);return;}
+  for(var a:applied)for(var b:applied)if(a!=b&&!a.value().isCompatibleWith(b.value())){menu.getSlot(2).set(ItemStack.EMPTY);return;}
+  if(book.is(Items.ENCHANTED_BOOK))for(var e:EnchantmentHelper.getEnchantmentsForCrafting(book).keySet())if(!DiscEnchantments.allowed(e.value())){menu.getSlot(2).set(ItemStack.EMPTY);return;}
  }
 }

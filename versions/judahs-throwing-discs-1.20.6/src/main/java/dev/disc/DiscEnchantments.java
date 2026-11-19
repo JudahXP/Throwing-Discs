@@ -12,9 +12,6 @@ public final class DiscEnchantments {
   public final String name;private final int maximum;
   DiscEnchantment(String name,int maximum){super(Enchantment.definition(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,ThrowingDiscMod.id("discs")),5,maximum,Enchantment.dynamicCost(8,8),Enchantment.dynamicCost(28,8),2,EquipmentSlot.MAINHAND,EquipmentSlot.OFFHAND));this.name=name;this.maximum=maximum;}
   @Override public boolean canEnchant(ItemStack stack){return stack.getItem() instanceof ThrowingDiscItem;}
-  @Override public int getMaxLevel(){return maximum;}
-  @Override public int getMinCost(int level){return 8+(level-1)*8;}
-  @Override public int getMaxCost(int level){return getMinCost(level)+20;}
   @Override public float getDamageBonus(int level,net.minecraft.world.entity.EntityType<?> type){return name.equals("keen_edge")?level:0;}
   @Override protected boolean checkCompatibility(Enchantment other){return super.checkCompatibility(other)&&!(other instanceof DiscEnchantment d&&((name.equals("curve")&&d.name.equals("homing"))||(name.equals("homing")&&d.name.equals("curve"))));}
  }
