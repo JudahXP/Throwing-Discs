@@ -1,0 +1,8 @@
+{
+  "minecraft": "1.21.2",
+  "unit_tests": 11,
+  "game_tests": 33,
+  "java_target": 21,
+  "copper": true,
+  "jar_sha256": "bb23d9f54563468c0cf496cf8ad3bc5f87b35b33c97ce3b5c7a9a5e1382c57f8"
+}

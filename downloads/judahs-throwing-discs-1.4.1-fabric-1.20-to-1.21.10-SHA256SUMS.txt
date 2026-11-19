@@ -1,2 +1,2 @@
-d44f6388e6a9c18ab30731485126e0795411cc83dc3e8b98f8c799c9f1cbd016  judahs-throwing-discs-1.4.1-fabric-1.20-to-1.21.10.zip
-3f20ac8490317494f2cd2f2cec3e3be8b8ffa013422e71a1b1f398a769033b64  judahs-throwing-discs-1.4.1-fabric-1.20-to-1.21.10-sources.zip
+ceeaf74cc97ca7c952636ed2258f53f58f178bf8e7f41d0dca696a0ea14f2a02  judahs-throwing-discs-1.4.1-fabric-1.20-to-1.21.10.zip
+394a201673fd95233eb8b855825e9a53181bd6b2e7fb3cdeb74a0de5f9984456  judahs-throwing-discs-1.4.1-fabric-1.20-to-1.21.10-sources.zip
