@@ -1,6 +1,14 @@
 # Judah’s Throwing Discs 1.4.1
 
-[Download all mod JARs](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.4.1-all-versions.zip) · [Download complete source](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.4.1-all-sources.zip)
+## Fabric backports: Minecraft 1.20–1.21.10
+
+[Download backport JARs](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.4.1-fabric-1.20-to-1.21.10.zip) · [Download complete backport source](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.4.1-fabric-1.20-to-1.21.10-sources.zip)
+
+All 18 targets passed their builds and automated unit/server tests. Use the JAR for your exact Minecraft version. Copper is omitted before 1.21.9. Java 17+ for 1.20–1.20.4; Java 21+ for 1.20.5 onward. Fabric Loader 0.19.5+ and matching Fabric API are required. Graphical playtesting has not been performed.
+
+## Newer versions: Minecraft 1.21.11 and 26.x
+
+[Download newer-version JARs](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.4.1-all-versions.zip) · [Download newer-version source](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/judahs-throwing-discs-1.4.1-all-sources.zip)
 
 Judah's Throwing Discs 1.4.1 — JudahXP
 

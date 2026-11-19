@@ -1,9 +1,9 @@
-# Fabric backports — work in progress
+# Fabric backports — completed
 
-Target: all 18 released versions from Minecraft 1.20 through 1.21.10. Copper is omitted before 1.21.9. Preserve release 1.4.1 flight, Harvest, dispenser reuse, enchantments, and reference tier damage/range.
+All 18 Minecraft targets from 1.20 through 1.21.10 passed build, unit and dedicated-server game tests. Copper is omitted before 1.21.9. Release 1.4.1 flight, Harvest, dispenser reuse, enchantments and tier damage/range are preserved.
 
-The previous workspace was lost before its backports were published. This branch reconstructs those changes and reruns verification. No backport download on this branch is a finished release until its VALIDATION.md records a successful build and runtime tests.
+Validation totals: 198 unit tests and 432 required server game tests across all targets. Individual reports are in each version project and downloads/backports/validation-VERSION.json. No graphical playtesting or multiplayer latency testing was performed.
 
-All 18 target projects have been reconstructed. Fifteen targets have passed and are packaged under downloads/backports. Final verification is running for 1.20.5, 1.21, and 1.21.1. Individual VALIDATION.md reports identify completed targets.
+Combined mod/source ZIPs and checksums are in downloads/; README.md links the downloads. Existing 1.21.11 and 26.x projects and release bundles remain unchanged.
 
-Build tools: JDK 25 for Gradle/Loom, Java 21 compiler/runtime toolchain. Early 1.20 ports target Java 17 class files. Scripts in this folder support reconstruction and verification.
+Build tools: JDK 25 for Gradle/Loom, Java 21 compiler/runtime toolchain. Early 1.20 ports emit Java 17 class files. Build per-version projects with `./gradlew build runGameTest`. The prepare/adapt scripts are historical one-shot reconstruction helpers; do not rerun them over maintained source files.

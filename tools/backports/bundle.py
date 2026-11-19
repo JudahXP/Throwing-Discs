@@ -34,4 +34,4 @@ p=repo/'README.md';old=p.read_text();section=f'''## Fabric backports: Minecraft 
 All 18 targets passed their builds and automated unit/server tests. Use the JAR for your exact Minecraft version. Copper is omitted before 1.21.9. Java 17+ for 1.20–1.20.4; Java 21+ for 1.20.5 onward. Fabric Loader 0.19.5+ and matching Fabric API are required. Graphical playtesting has not been performed.
 
 '''
-p.write_text(old.split('\n',1)[0]+'\n\n'+section+old.split('\n',1)[1].lstrip());print('\n'.join(checks))
+p.write_text(old.split('\n',1)[0]+'\n\n'+section+'## Newer versions: Minecraft 1.21.11 and 26.x\n\n'+old.split('\n',1)[1].lstrip().replace('[Download all mod JARs]','[Download newer-version JARs]').replace('[Download complete source]','[Download newer-version source]'));print('\n'.join(checks))
