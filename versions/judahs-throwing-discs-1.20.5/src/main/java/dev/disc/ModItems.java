@@ -21,6 +21,7 @@ public final class ModItems {
             properties.attributes(net.minecraft.world.item.component.ItemAttributeModifiers.builder()
                 .add(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE,new net.minecraft.world.entity.ai.attributes.AttributeModifier(Item.BASE_ATTACK_DAMAGE_UUID,"Disc damage",tier.melee-1,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND)
                 .add(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED,new net.minecraft.world.entity.ai.attributes.AttributeModifier(Item.BASE_ATTACK_SPEED_UUID,"Disc speed",-3,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND).build());
+            if (tier == DiscTier.COPPER) properties.durability(95);
             if (tier == DiscTier.NETHERITE) properties.fireResistant();
             ITEMS.put(tier, Registry.register(BuiltInRegistries.ITEM, key,
                 new ThrowingDiscItem(properties, tier)));

@@ -13,5 +13,6 @@
   "enchantment.throwing_disc.keen_edge": "Keen Edge",
   "tag.item.throwing_disc.knockback_enchantable": "Knockback Enchantable",
   "tag.item.throwing_disc.fire_aspect_enchantable": "Fire Aspect Enchantable",
-  "enchantment.throwing_disc.harvest": "Harvest"
+  "enchantment.throwing_disc.harvest": "Harvest",
+  "item.throwing_disc.copper_throwing_disc": "Copper Throwing Disc"
 }

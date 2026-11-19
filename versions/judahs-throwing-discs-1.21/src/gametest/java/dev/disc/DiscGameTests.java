@@ -76,7 +76,7 @@ public class DiscGameTests implements FabricGameTest {
     @GameTest(template=EMPTY_STRUCTURE) public void toolDurabilityAndThrowWear(GameTestHelper h) {
         var p=player(h);
         p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
-        int[] expected={125,16,780,1015};
+        int[] expected={125,16,780,1015,95};
         for(DiscTier tier:DiscTier.values()) {
             var item=ModItems.get(tier);
             var stack=new ItemStack(item);
@@ -366,7 +366,7 @@ public class DiscGameTests implements FabricGameTest {
         var shovels=new net.minecraft.world.item.Item[]{Items.IRON_SHOVEL,Items.GOLDEN_SHOVEL,Items.DIAMOND_SHOVEL,Items.NETHERITE_SHOVEL};
         for(var tier:DiscTier.values()) {
             var disc=new ItemStack(ModItems.get(tier)).get(DataComponents.ATTRIBUTE_MODIFIERS);
-            var shovel=new ItemStack(shovels[tier.ordinal()]).get(DataComponents.ATTRIBUTE_MODIFIERS);
+            var shovel=new ItemStack(shovels[tier == DiscTier.COPPER ? 0 : tier.ordinal()]).get(DataComponents.ATTRIBUTE_MODIFIERS);
             for(var entry:shovel.modifiers()) {
                 double actual=disc.modifiers().stream().filter(e->e.attribute().equals(entry.attribute())).findFirst().orElseThrow().modifier().amount();
                 double expected=entry.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)?tier.melee-1:-3;

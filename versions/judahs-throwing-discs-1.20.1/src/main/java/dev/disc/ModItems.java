@@ -18,6 +18,7 @@ public final class ModItems {
             var id = ThrowingDiscMod.id(tier.id + "_throwing_disc");
             var key = ResourceKey.create(Registries.ITEM, id);
             var properties = new Item.Properties().durability(tier.material.getUses() / 2);
+            if (tier == DiscTier.COPPER) properties.durability(95);
             if (tier == DiscTier.NETHERITE) properties.fireResistant();
             ITEMS.put(tier, Registry.register(BuiltInRegistries.ITEM, key,
                 new ThrowingDiscItem(properties, tier)));

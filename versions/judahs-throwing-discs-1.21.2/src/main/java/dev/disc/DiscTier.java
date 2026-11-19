@@ -3,7 +3,8 @@ import net.minecraft.world.item.ToolMaterial;
 public enum DiscTier {
  IRON("iron",6,4,16,ToolMaterial.IRON),
  GOLD("gold",5,3,18,ToolMaterial.GOLD), DIAMOND("diamond",7.5F,5,19,ToolMaterial.DIAMOND),
- NETHERITE("netherite",8.5F,6,21,ToolMaterial.NETHERITE);
+ NETHERITE("netherite",8.5F,6,21,ToolMaterial.NETHERITE),
+ COPPER("copper",5,3,14,ToolMaterial.IRON);
  public final String id;
  public final float damage, melee;
  public final double range;

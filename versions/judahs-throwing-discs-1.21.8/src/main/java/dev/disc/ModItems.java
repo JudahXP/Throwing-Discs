@@ -28,6 +28,7 @@ public final class ModItems {
                     new net.minecraft.world.entity.ai.attributes.AttributeModifier(Item.BASE_ATTACK_SPEED_ID,
                         -3.0, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
                     net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND).build());
+            if (tier == DiscTier.COPPER) properties.durability(95).enchantable(13).repairable(net.minecraft.world.item.Items.COPPER_INGOT);
             if (tier == DiscTier.NETHERITE) properties.fireResistant();
             ITEMS.put(tier, Registry.register(BuiltInRegistries.ITEM, key,
                 new ThrowingDiscItem(properties, tier)));

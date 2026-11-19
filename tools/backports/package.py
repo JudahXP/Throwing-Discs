@@ -6,7 +6,7 @@ for v in sys.argv[1:]:
  m=re.search(r'All (\d+) required tests passed',log);assert m,v
  suites=[ET.parse(p).getroot() for p in (r/'build/test-results/test').glob('TEST-*.xml')];count=sum(int(s.get('tests')) for s in suites);assert count==11 and all(s.get('failures')=='0' and s.get('errors')=='0' for s in suites)
  jars=[p for p in (r/'build/libs').glob('*.jar') if '-sources' not in p.name and '-dev' not in p.name];assert len(jars)==1
- copper=tuple(map(int,v.split('.')))>=(1,21,9);java=17 if tuple(map(int,v.split('.')))<(1,20,5)else 21
+ copper=True;java=17 if tuple(map(int,v.split('.')))<(1,20,5)else 21
  with zipfile.ZipFile(jars[0]) as z:
   d=json.loads(z.read('fabric.mod.json'));assert d['version']=='1.4.1+'+v and d['depends']['minecraft']=='='+v
   assert not any('DiscGameTests' in n or 'DiscPhysicsTest' in n or 'ricochet.json' in n for n in z.namelist())

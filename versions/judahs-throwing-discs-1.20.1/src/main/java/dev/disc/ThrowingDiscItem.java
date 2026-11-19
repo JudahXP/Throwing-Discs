@@ -52,8 +52,8 @@ public final class ThrowingDiscItem extends Item {
         }
         return net.minecraft.world.InteractionResultHolder.success(player.getItemInHand(hand));
     }
-    @Override public int getEnchantmentValue(){return tier.material.getEnchantmentValue();}
-    @Override public boolean isValidRepairItem(ItemStack stack,ItemStack ingredient){return tier.material.getRepairIngredient().test(ingredient);}
+    @Override public int getEnchantmentValue(){return tier==DiscTier.COPPER?13:tier.material.getEnchantmentValue();}
+    @Override public boolean isValidRepairItem(ItemStack stack,ItemStack ingredient){return tier==DiscTier.COPPER?ingredient.is(net.minecraft.world.item.Items.COPPER_INGOT):tier.material.getRepairIngredient().test(ingredient);}
     @Override public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute,net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot){
         if(slot!=net.minecraft.world.entity.EquipmentSlot.MAINHAND)return super.getDefaultAttributeModifiers(slot);
         return com.google.common.collect.ImmutableMultimap.of(

@@ -6,11 +6,11 @@ notes='''Judah's Throwing Discs 1.4.1 — Fabric backports
 
 All 18 released Minecraft versions from 1.20 through 1.21.10. Install ONLY the JAR matching your exact Minecraft version, on client and server, with Fabric Loader 0.19.5+ and matching Fabric API. Java 17+ for 1.20–1.20.4; Java 21+ for 1.20.5 onward.
 
-Copper is omitted before 1.21.9. Every version includes iron, golden, diamond and netherite discs.
+Copper discs are included in every supported version. Every version includes iron, golden, diamond and netherite discs.
 
 Preserves smooth direct return without a forced arc, unlimited bounce count, no total piercing-count cap, Harvest I, reusable dispenser throws and complete Ricochet removal. Each entity may be hit once per outbound/return pass. Phasing is allowed ONLY while returning and when the entire movement step stays within eight blocks of the destination player/dispenser. Base ranges are unchanged.
 
-Throw / melee / base range: copper 5 / 3 / 14 (1.21.9+); iron 6 / 4 / 16; gold 5 / 3 / 18; diamond 7.5 / 5 / 19; netherite 8.5 / 6 / 21.
+Throw / melee / base range: copper 5 / 3 / 14; iron 6 / 4 / 16; gold 5 / 3 / 18; diamond 7.5 / 5 / 19; netherite 8.5 / 6 / 21.
 
 Harvest breaks mature wheat, carrots, potatoes, beetroot, nether wart, cocoa, melons, pumpkins and upper sugar cane/bamboo. Vanilla drops; no automatic replanting. Young crops and the bottom cane/bamboo block remain. Dispensers recover the real returning disc in an empty slot, or drop it if missing/full. Throws consume durability. Older versions use the available trident impact sound.
 
@@ -31,7 +31,7 @@ p=repo/'README.md';old=p.read_text();section=f'''## Fabric backports: Minecraft 
 
 [Download backport JARs](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/{name}.zip) · [Download complete backport source](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/{name}-sources.zip)
 
-All 18 targets passed their builds and automated unit/server tests. Use the JAR for your exact Minecraft version. Copper is omitted before 1.21.9. Java 17+ for 1.20–1.20.4; Java 21+ for 1.20.5 onward. Fabric Loader 0.19.5+ and matching Fabric API are required. Graphical playtesting has not been performed.
+All 18 targets passed their builds and automated unit/server tests. Use the JAR for your exact Minecraft version. Copper discs are included in every supported version. Java 17+ for 1.20–1.20.4; Java 21+ for 1.20.5 onward. Fabric Loader 0.19.5+ and matching Fabric API are required. Graphical playtesting has not been performed.
 
 '''
 p.write_text(old.split('\n',1)[0]+'\n\n'+section+'## Newer versions: Minecraft 1.21.11 and 26.x\n\n'+old.split('\n',1)[1].lstrip().replace('[Download all mod JARs]','[Download newer-version JARs]').replace('[Download complete source]','[Download newer-version source]'));print('\n'.join(checks))
