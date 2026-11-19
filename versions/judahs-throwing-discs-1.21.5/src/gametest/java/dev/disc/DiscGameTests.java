@@ -194,13 +194,13 @@ public class DiscGameTests {
         h.succeed();
     }
     @GameTest public void allCraftingAndSmithingRecipesWork(GameTestHelper h) {
-        var materials = new net.minecraft.world.item.Item[]{Items.IRON_INGOT,Items.GOLD_INGOT,Items.DIAMOND};
+        var materials = new net.minecraft.world.item.Item[]{Items.IRON_INGOT,Items.GOLD_INGOT,Items.DIAMOND,Items.COPPER_INGOT};
         for (int i=0;i<materials.length;i++) {
             var items = new java.util.ArrayList<ItemStack>(java.util.Collections.nCopies(9,ItemStack.EMPTY));
             for (int slot : new int[]{1,3,5,7}) items.set(slot,new ItemStack(materials[i]));
             var input = net.minecraft.world.item.crafting.CraftingInput.of(3,3,items);
             var recipe = h.getLevel().recipeAccess().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,input,h.getLevel()).orElseThrow();
-            check(h,recipe.value().assemble(input,h.getLevel().registryAccess()).is(ModItems.get(DiscTier.values()[i])), "Correct crafting output for " + DiscTier.values()[i]);
+            check(h,recipe.value().assemble(input,h.getLevel().registryAccess()).is(ModItems.get((i==3?DiscTier.COPPER:DiscTier.values()[i]))), "Correct crafting output for " + (i==3?DiscTier.COPPER:DiscTier.values()[i]));
         }
         var diamond = new ItemStack(ModItems.get(DiscTier.DIAMOND));
         diamond.set(DataComponents.CUSTOM_NAME, Component.literal("Upgrade me"));

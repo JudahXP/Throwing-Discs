@@ -27,7 +27,7 @@ for kind,suffix in [('', '.jar'),('-sources','-source.zip')]:
  with zipfile.ZipFile(p)as z:assert z.testzip()is None and len(z.namelist())==20
  checks.append(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name)
 (repo/'downloads'/(name+'-SHA256SUMS.txt')).write_text('\n'.join(checks)+'\n')
-p=repo/'README.md';old=p.read_text();section=f'''## Fabric backports: Minecraft 1.20–1.21.10
+p=repo/'README.md';old=p.read_text();old=old.split('\n',1)[0]+'\n\n'+old.split('## Newer versions: Minecraft 1.21.11 and 26.x\n\n',1)[-1] if '## Newer versions: Minecraft 1.21.11 and 26.x' in old else old;section=f'''## Fabric backports: Minecraft 1.20–1.21.10
 
 [Download backport JARs](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/{name}.zip) · [Download complete backport source](https://github.com/JudahXP/Throwing-Discs/raw/refs/heads/main/downloads/{name}-sources.zip)
 
