@@ -23,7 +23,7 @@ public final class ThrowingDiscItem extends Item {
     @Override public void hurtEnemy(ItemStack stack, net.minecraft.world.entity.LivingEntity target, net.minecraft.world.entity.LivingEntity attacker) {
         super.hurtEnemy(stack, target, attacker);
         if (attacker.level() instanceof ServerLevel server) server.playSound(null, target.getX(), target.getY(), target.getZ(),
-            SoundEvents.TRIDENT_HIT.value(), SoundSource.PLAYERS, 0.65F, 1.0F);
+            SoundEvents.TRIDENT_HIT, SoundSource.PLAYERS, 0.65F, 1.0F);
     }
     @Override public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (hand == InteractionHand.MAIN_HAND && player.isShiftKeyDown()

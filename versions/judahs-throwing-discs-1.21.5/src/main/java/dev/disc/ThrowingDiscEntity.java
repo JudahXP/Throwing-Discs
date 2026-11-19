@@ -298,7 +298,7 @@ public final class ThrowingDiscEntity extends Projectile implements ItemSupplier
                 if (blocks != null) blocks.disable(server, living, 3.0F, blocking);
             }
             if (damaged) {
-                sound(SoundEvents.TRIDENT_HIT.value(), 0.65F, 1.0F);
+                sound(SoundEvents.TRIDENT_HIT, 0.65F, 1.0F);
                 int fireAspect = Math.clamp(vanillaEnchantmentLevel(net.minecraft.world.item.enchantment.Enchantments.FIRE_ASPECT),0,2);
                 if (fireAspect > 0) living.igniteForSeconds(4 * fireAspect);
                 Vec3 motion = getDeltaMovement();

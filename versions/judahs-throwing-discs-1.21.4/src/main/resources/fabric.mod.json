@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "throwing_disc",
+  "version": "${version}",
+  "name": "Judah's Throwing Discs",
+  "description": "A Vanilla friendly recreation of the recently announced Throwing Disc!",
+  "authors": [
+    "JudahXP"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.disc.ThrowingDiscMod"
+    ],
+    "client": [
+      "dev.disc.client.ThrowingDiscClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "=1.21.4",
+    "java": ">=21",
+    "fabric-api": ">=0.119.4+1.21.4"
+  },
+  "icon": "assets/throwing_disc/icon.png",
+  "mixins": [
+    "throwing_disc.mixins.json"
+  ]
+}

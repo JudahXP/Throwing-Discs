@@ -14,7 +14,7 @@ for v in ['1.21.10','1.21.9','1.21.8','1.21.7','1.21.6','1.21.5']:
  p=r/'gradle.properties';p.write_text(p.read_text().replace('1.21.11',v).replace('0.141.1+'+v,matrix[v]))
  p=r/'src/main/resources/fabric.mod.json';d=json.loads(p.read_text());d['depends']['minecraft']='='+v;d['depends']['fabric-api']='>='+matrix[v];p.write_text(json.dumps(d,indent=2)+'\n')
  for p in (r/'src').rglob('*.java'):
-  s=p.read_text().replace('Identifier','ResourceLocation').replace('needsSync','hasImpulse').replace('projectile.hurtingprojectile.LargeFireball','projectile.LargeFireball').replace('SoundEvents.SPEAR_HIT','SoundEvents.TRIDENT_HIT')
+  s=p.read_text().replace('Identifier','ResourceLocation').replace('needsSync','hasImpulse').replace('projectile.hurtingprojectile.LargeFireball','projectile.LargeFireball').replace('SoundEvents.SPEAR_HIT.value()','SoundEvents.TRIDENT_HIT')
   if v not in ['1.21.9','1.21.10']:
    s=s.replace('Items.COPPER_INGOT,','').replace('Items.COPPER_SHOVEL,','').replace('{95,125,16,780,1015}','{125,16,780,1015}')
    if p.name=='TextureTest.java':s=s.replace('"copper",','')
