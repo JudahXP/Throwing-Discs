@@ -1,0 +1,23 @@
+{
+  "description": {
+    "translate": "enchantment.throwing_disc.harvest"
+  },
+  "supported_items": "#throwing_disc:discs",
+  "primary_items": "#throwing_disc:discs",
+  "weight": 3,
+  "max_level": 1,
+  "min_cost": {
+    "base": 8,
+    "per_level_above_first": 8
+  },
+  "max_cost": {
+    "base": 28,
+    "per_level_above_first": 8
+  },
+  "anvil_cost": 2,
+  "slots": [
+    "mainhand",
+    "offhand"
+  ],
+  "effects": {}
+}

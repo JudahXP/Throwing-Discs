@@ -1,0 +1,11 @@
+plugins { id 'java'; id 'net.minecraftforge.gradle' version '7.0.29' }
+version = '1.4.1+1.21.6'
+group = 'dev.disc'
+base.archivesName = 'judahs-throwing-discs-forge-mc1.21.6'
+java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+sourceSets.main.java.srcDir 'src/client/java'
+minecraft { mappings channel: 'official', version: '1.21.6' }
+repositories { minecraft.mavenizer(it); maven fg.forgeMaven; maven fg.minecraftLibsMaven; mavenCentral() }
+dependencies { implementation minecraft.dependency('net.minecraftforge:forge:1.21.6-56.0.0') }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }
+jar { manifest.attributes('MixinConfigs': 'throwing_disc.mixins.json'); from('LICENSE') }

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "throwing_disc:diamond_throwing_disc",
+  "addition": "minecraft:netherite_ingot",
+  "result": {
+    "id": "throwing_disc:netherite_throwing_disc"
+  }
+}
