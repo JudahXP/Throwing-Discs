@@ -6,6 +6,7 @@ for v in sys.argv[1:]:
  jars=[p for p in (root/'build/libs').glob('*.jar') if ('-srg.jar' in p.name if c['java']==17 else not any(x in p.name for x in ['-sources','-srg','-dev']))];assert len(jars)==1,(v,jars)
  jar=jars[0]
  with zipfile.ZipFile(jar) as z:
+  pack=json.loads(z.read('pack.mcmeta'));assert 'pack' in pack
   names=z.namelist();assert 'META-INF/mods.toml' in names and 'fabric.mod.json' not in names
   assert not any('ricochet' in n.lower() or 'DiscGameTests' in n for n in names)
   for tier in ['copper','iron','gold','diamond','netherite']:assert f'assets/throwing_disc/textures/item/{tier}_throwing_disc.png' in names
