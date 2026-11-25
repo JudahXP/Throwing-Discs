@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "throwing_disc:homing",
+    "throwing_disc:range",
+    "throwing_disc:curve",
+    "throwing_disc:keen_edge",
+    "throwing_disc:harvest"
+  ]
+}

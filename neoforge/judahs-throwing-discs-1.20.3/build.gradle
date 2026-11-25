@@ -1,0 +1,9 @@
+plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+version = '1.4.1+1.20.3'
+group = 'dev.disc'
+base.archivesName = 'judahs-throwing-discs-neoforge-mc1.20.3'
+java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+sourceSets.main.java.srcDir 'src/client/java'
+neoForge { version = '20.3.8-beta'; mods { throwing_disc { sourceSet sourceSets.main } } }
+tasks.withType(JavaCompile).configureEach { options.release = 17; options.encoding = 'UTF-8' }
+jar { from('LICENSE') }

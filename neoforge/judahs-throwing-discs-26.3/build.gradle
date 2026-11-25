@@ -1,0 +1,19 @@
+plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+version = '1.4.1+26.3'
+group = 'dev.disc'
+base.archivesName = 'judahs-throwing-discs-neoforge-mc26.3'
+java { toolchain.languageVersion = JavaLanguageVersion.of(25); withSourcesJar() }
+sourceSets.main.java.srcDir 'src/client/java'
+neoForge { version = '26.3.0.118'; mods { throwing_disc { sourceSet sourceSets.main } } }
+tasks.withType(JavaCompile).configureEach { options.release = 25; options.encoding = 'UTF-8' }
+jar { from('LICENSE') }
+// Forge ships Mixin 0.8.7: keep mixin bytecode within its supported compatibility level.
+sourceSets.main.java.exclude 'dev/disc/mixin/**'
+def forgeMixins = tasks.register('compileForgeMixins', JavaCompile) {
+    source = fileTree('src/main/java') { include 'dev/disc/mixin/**/*.java' }
+    classpath = sourceSets.main.compileClasspath + sourceSets.main.output.classesDirs
+    destinationDirectory = layout.buildDirectory.dir('classes/java/forgeMixins')
+    options.release = 21
+    dependsOn tasks.named('compileJava')
+}
+tasks.named('jar') { from(forgeMixins) }
