@@ -8,4 +8,6 @@ for v in sorted(json.loads((repo/'tools/forge/matrix.json').read_text()),key=lam
  subprocess.run([sys.executable,'tools/forge/build.py',v],cwd=repo,check=True)
  p=subprocess.run([sys.executable,'tools/forge/package.py',v],cwd=repo)
  if p.returncode:print(v,'needs a fix; continuing other versions',flush=True)
- else:print(v,'compile and JAR checks passed',flush=True)
+ else:
+  print(v,'compile and JAR checks passed',flush=True)
+  subprocess.run([sys.executable,'tools/forge/cleanup.py',v],cwd=repo,check=True)
