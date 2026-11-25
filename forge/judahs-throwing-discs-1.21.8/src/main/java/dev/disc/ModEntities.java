@@ -12,6 +12,7 @@ public final class ModEntities {
     private static void registerTicket(net.minecraftforge.registries.RegisterEvent event) { FLIGHT_TICKET = register(event,
         Registries.TICKET_TYPE, ThrowingDiscMod.id("disc_flight"),
         new net.minecraft.server.level.TicketType(20, false, net.minecraft.server.level.TicketType.TicketUse.LOADING_AND_SIMULATION));
+    }
     public static EntityType<ThrowingDiscEntity> DISC;
     private static void registerEntity(net.minecraftforge.registries.RegisterEvent event) { DISC = register(event,
         Registries.ENTITY_TYPE, ThrowingDiscMod.id("throwing_disc"),
