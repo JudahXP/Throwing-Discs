@@ -2,4 +2,4 @@
 
 Requires Forge 64.1.6 or later for Minecraft 26.1.2. Includes all five disc tiers. Do not install with the Fabric edition.
 
-Validation pending. Planned checks: compilation and JAR inspection only; no game-test suite or gameplay testing.
+Compilation and JAR inspection passed. No automated game-test suite was run.

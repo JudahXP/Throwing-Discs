@@ -1,0 +1,2 @@
+bedd034ee8e30ccf7318d49dbd6c438f3ac8d7e56682a721041c25cc40a28bfa  judahs-throwing-discs-1.4.1-forge-all-versions.zip
+caeec365e597164cb4286bfea48233496f4ed88ecb8f2310ea11b831fee49baf  judahs-throwing-discs-1.4.1-forge-all-versions-sources.zip

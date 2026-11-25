@@ -1,0 +1,9 @@
+{
+  "minecraft": "1.21.8",
+  "forge": "1.21.8-58.1.26",
+  "java": 21,
+  "compilation": "passed",
+  "jar_inspection": "passed",
+  "gameplay_tested": false,
+  "sha256": "0304d8db1b4f57c9da9cf5af82f6df11c8e4ee4448b5e790ccc295a5abc0cd06"
+}

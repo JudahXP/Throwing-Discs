@@ -30,3 +30,13 @@ UPGRADING: Back up your world. Let version 1.3.1 remove retired Ricochet from ca
 All six clean builds passed 11 unit tests and 34 required game tests each. Visual playtesting was not performed.
 
 Complete per-version projects, instructions and validation reports are in `versions/`.
+
+## Forge ports
+
+Install only the JAR matching your Minecraft version, with Forge. Do not install the Fabric edition alongside it.
+Includes all five disc tiers and the existing 1.4.1 behavior: smooth direct return, return-only phasing within eight blocks, unlimited bounce count, Harvest, reusable dispenser throws, and no Ricochet enchantment.
+
+Minecraft 1.20.5 and 1.21.2 are omitted because Forge does not publish releases for them.
+Validation was deliberately limited to compilation and JAR inspection. No game-test suites or gameplay tests were run for these Forge ports.
+
+[Download Forge mods](downloads/judahs-throwing-discs-1.4.1-forge-all-versions.zip) · [Download Forge source](downloads/judahs-throwing-discs-1.4.1-forge-all-versions-sources.zip)

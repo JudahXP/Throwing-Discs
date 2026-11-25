@@ -9,7 +9,7 @@ public final class ThrowingDiscMod {
         var bus = context.getModBusGroup();
         net.minecraftforge.registries.RegisterEvent.getBus(bus).addListener(ThrowingDiscMod::register);
         net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent.getBus(bus).addListener(e -> e.enqueueWork(DiscDispense::initialize));
-        net.minecraftforge.event.BuildCreativeModeTabContentsEvent.BUS.addListener(ThrowingDiscMod::creative);
+        net.minecraftforge.event.BuildCreativeModeTabContentsEvent.getBus(bus).addListener(ThrowingDiscMod::creative);
         net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent.BUS.addListener(ThrowingDiscMod::logout);
         net.minecraftforge.event.server.ServerStoppingEvent.BUS.addListener(e -> e.getServer().getPlayerList().getPlayers().forEach(DiscFlights::recover));
         net.minecraftforge.event.server.ServerStoppedEvent.BUS.addListener(e -> DiscFlights.clear());
