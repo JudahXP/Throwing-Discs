@@ -1,7 +1,8 @@
 from pathlib import Path
 import json,zipfile,hashlib
 repo=Path(__file__).resolve().parents[2];matrix=json.loads((repo/'tools/forge/matrix.json').read_text());out=repo/'downloads';reports=[]
-for v in matrix:reports.append(json.loads((out/'forge'/f'validation-{v}.json').read_text()))
+for v in matrix:
+ report=json.loads((out/'forge'/f'validation-{v}.json').read_text());assert not report.get('superseded',False),v;reports.append(report)
 readme='''Judah's Throwing Discs 1.4.1 — Forge
 
 Install only the JAR matching your Minecraft version, with Forge. Do not install the Fabric edition alongside it.

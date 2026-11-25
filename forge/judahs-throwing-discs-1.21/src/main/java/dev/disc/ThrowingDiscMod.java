@@ -21,7 +21,7 @@ public final class ThrowingDiscMod {
     }
     private static void creative(net.minecraftforge.event.BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey().equals(net.minecraft.world.item.CreativeModeTabs.COMBAT))
-            for (DiscTier tier : DiscTier.values()) event.accept(ModItems.get(tier));
+            for (DiscTier tier : new DiscTier[] { DiscTier.COPPER, DiscTier.IRON, DiscTier.GOLD, DiscTier.DIAMOND, DiscTier.NETHERITE }) event.accept(ModItems.get(tier));
     }
     private static void logout(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) DiscFlights.recover(player);

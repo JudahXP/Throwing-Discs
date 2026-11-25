@@ -5,5 +5,6 @@
   "compilation": "passed",
   "jar_inspection": "passed",
   "gameplay_tested": false,
-  "sha256": "aeb697301adde9481d8e1d53a7114acb90fb1b4b6d8658c8a8dffd9e52d75e85"
+  "sha256": "aeb697301adde9481d8e1d53a7114acb90fb1b4b6d8658c8a8dffd9e52d75e85",
+  "superseded": true
 }

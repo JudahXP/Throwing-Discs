@@ -5,6 +5,7 @@ license="MIT"
 modId="throwing_disc"
 version="1.4.1+26.2"
 displayName="Judah's Throwing Discs"
+logoFile="assets/throwing_disc/icon.png"
 authors="JudahXP"
 description="Throwing discs with smooth returns, Harvest and reusable dispenser throws."
 [[dependencies.throwing_disc]]

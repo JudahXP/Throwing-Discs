@@ -7,6 +7,8 @@ for v in sys.argv[1:]:
  jar=jars[0]
  with zipfile.ZipFile(jar) as z:
   pack=json.loads(z.read('pack.mcmeta'));assert 'pack' in pack
+  assert 'logoFile="assets/throwing_disc/icon.png"' in z.read('META-INF/mods.toml').decode()
+  assert z.read('assets/throwing_disc/icon.png').startswith(b'\x89PNG')
   names=z.namelist();assert 'META-INF/mods.toml' in names and 'fabric.mod.json' not in names
   assert not any('ricochet' in n.lower() or 'DiscGameTests' in n for n in names)
   for tier in ['copper','iron','gold','diamond','netherite']:assert f'assets/throwing_disc/textures/item/{tier}_throwing_disc.png' in names
