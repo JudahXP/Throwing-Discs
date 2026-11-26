@@ -58,18 +58,47 @@ public final class ThrowingDiscsPlugin extends JavaPlugin implements Listener {
   Flight f=new Flight(p,tier,carried,start,start.getDirection().multiply(DiscPhysics.SPEED));
   p.getInventory().setItem(event.getHand(),null);flights.add(f);p.setCooldown(Material.IRON_NUGGET,6);
  }
- @EventHandler public void quit(PlayerQuitEvent event) {for(Flight f:List.copyOf(flights))if(f.owner.equals(event.getPlayer().getUniqueId()))f.finish(true);}
+ @EventHandler public void quit(PlayerQuitEvent event) {for(Flight f:List.copyOf(flights))if(event.getPlayer().getUniqueId().equals(f.owner))f.finish(true);}
+ @EventHandler(priority=EventPriority.HIGHEST,ignoreCancelled=true)
+ public void dispense(org.bukkit.event.block.BlockDispenseEvent event) {
+  DiscTier kind=tier(event.getItem());
+  if(kind==null||!(event.getBlock().getState() instanceof Dispenser))return;
+  event.setCancelled(true);
+  Location origin=event.getBlock().getLocation();ItemStack expected=event.getItem().clone();expected.setAmount(1);
+  // Vanilla restores its temporarily removed item after a cancelled event returns.
+  getServer().getScheduler().runTask(this,()->{
+   if(!origin.isWorldLoaded()||!origin.getWorld().isChunkLoaded(origin.getBlockX()>>4,origin.getBlockZ()>>4))return;
+   if(!(origin.getBlock().getState() instanceof Dispenser dispenser))return;
+   Inventory inventory=dispenser.getInventory();
+   for(int slot=0;slot<inventory.getSize();slot++) {
+    ItemStack stored=inventory.getItem(slot);if(stored==null||!stored.isSimilar(expected)||stored.getAmount()!=1)continue;
+    ItemStack carried=stored.clone();ItemMeta meta=carried.getItemMeta();
+    if(meta instanceof org.bukkit.inventory.meta.Damageable d){d.setDamage(d.getDamage()+1);if(d.getDamage()>=kind.durability){inventory.setItem(slot,null);return;}carried.setItemMeta(meta);}
+    Vector direction=((org.bukkit.block.data.Directional)dispenser.getBlockData()).getFacing().getDirection();
+    Location start=origin.clone().add(.5,.5,.5).add(direction.clone().multiply(.85));
+    Flight flight=new Flight(null,kind,carried,start,direction.multiply(DiscPhysics.SPEED));flight.dispenser=origin.clone();
+    inventory.setItem(slot,null);flights.add(flight);return;
+   }
+  });
+ }
  private final class Flight {
   final UUID owner;final DiscTier tier;final ItemStack carried;final World world;final ItemDisplay display;
-  final Set<UUID> hit=new HashSet<>();Location position;Vector velocity;boolean returning,finished;int age,bounces;double distance;
+  final Set<UUID> hit=new HashSet<>();Location dispenser;Location position;Vector velocity;boolean returning,finished;int age,bounces;double distance;
   Flight(Player player,DiscTier tier,ItemStack stack,Location start,Vector velocity) {
-   owner=player.getUniqueId();this.tier=tier;carried=stack;world=start.getWorld();position=start.clone();this.velocity=velocity.clone();
+   owner=player==null?null:player.getUniqueId();this.tier=tier;carried=stack;world=start.getWorld();position=start.clone();this.velocity=velocity.clone();
    display=world.spawn(start,ItemDisplay.class,d->{d.setItemStack(stack);d.setPersistent(false);d.setTeleportDuration(1);d.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);});
   }
   void tick() {
-   Player player=getServer().getPlayer(owner);
-   if(player==null||!player.isOnline()||player.isDead()||player.getGameMode()==GameMode.SPECTATOR||player.getWorld()!=world||++age>320){finish(false);return;}
-   Location target=player.getEyeLocation().subtract(0,.35,0);
+   Player player=owner==null?null:getServer().getPlayer(owner);
+   if(++age>320){finish(false);return;}
+   Location target;
+   if(dispenser!=null){
+    if(!world.isChunkLoaded(dispenser.getBlockX()>>4,dispenser.getBlockZ()>>4)||!(dispenser.getBlock().getState() instanceof Dispenser)){finish(false);return;}
+    target=dispenser.clone().add(.5,.5,.5);
+   }else{
+    if(player==null||!player.isOnline()||player.isDead()||player.getGameMode()==GameMode.SPECTATOR||player.getWorld()!=world){finish(false);return;}
+    target=player.getEyeLocation().subtract(0,.35,0);
+   }
    if(!returning&&(age>=160||distance>=tier.range+bounces*12||velocity.lengthSquared()<1e-10)){returning=true;hit.clear();}
    if(returning)velocity=DiscPhysics.home(velocity,target.toVector().subtract(position.toVector()));
    Location end=position.clone().add(velocity);
@@ -82,18 +111,22 @@ public final class ThrowingDiscsPlugin extends JavaPlugin implements Listener {
     velocity=DiscPhysics.reflect(velocity,block.getHitBlockFace().getDirection());if(!returning)bounces++;
     world.playSound(end,Sound.ITEM_TRIDENT_HIT_GROUND,.4f,1.4f);
    }
+   DiscHarvest.harvest(carried,display,player,position,end);
    Vector segment=end.toVector().subtract(position.toVector());
    if(segment.lengthSquared()>1e-10) {
     RayTraceResult entity;
     while((entity=world.rayTraceEntities(position,segment,segment.length(),.25,e->e instanceof LivingEntity&&!e.getUniqueId().equals(owner)&&!hit.contains(e.getUniqueId())&&(!(e instanceof Player q)||(q.getGameMode()!=GameMode.SPECTATOR&&q.getGameMode()!=GameMode.CREATIVE))))!=null) {
-     LivingEntity victim=(LivingEntity)entity.getHitEntity();hit.add(victim.getUniqueId());victim.damage(tier.thrownDamage,player);
+     LivingEntity victim=(LivingEntity)entity.getHitEntity();hit.add(victim.getUniqueId());if(player!=null)victim.damage(tier.thrownDamage,player);else victim.damage(tier.thrownDamage,display);
     }
    }
    distance+=position.distance(end);position=end;position.setYaw(age*40%360);display.teleport(position);
   }
   void finish(boolean recover) {
    if(finished)return;finished=true;display.remove();flights.remove(this);
-   Player p=getServer().getPlayer(owner);
+   Player p=owner==null?null:getServer().getPlayer(owner);
+   if(recover&&dispenser!=null&&world.isChunkLoaded(dispenser.getBlockX()>>4,dispenser.getBlockZ()>>4)&&dispenser.getBlock().getState() instanceof Dispenser holder){
+    holder.getInventory().addItem(carried).values().forEach(s->world.dropItemNaturally(dispenser.clone().add(.5,.5,.5),s));return;
+   }
    if(recover&&p!=null){p.getInventory().addItem(carried).values().forEach(s->p.getWorld().dropItemNaturally(p.getLocation(),s));}
    else world.dropItemNaturally(position,carried);
   }
