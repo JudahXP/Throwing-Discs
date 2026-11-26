@@ -10,13 +10,13 @@ authors="JudahXP"
 description="Throwing discs with smooth returns, Harvest and reusable dispenser throws."
 [[dependencies.throwing_disc]]
 modId="neoforge"
-type="required"
+mandatory=true
 versionRange="[20.2.93,)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.throwing_disc]]
 modId="minecraft"
-type="required"
+mandatory=true
 versionRange="[1.20.2]"
 ordering="NONE"
 side="BOTH"

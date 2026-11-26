@@ -1,0 +1,9 @@
+{
+  "minecraft": "1.21",
+  "neoforge": "21.0.167",
+  "java": 21,
+  "sha256": "eb36dc073384e1f6f5c2eb4a2102036a27a7378f1b063a9162c3e00758a189bf",
+  "compilation": "passed",
+  "jar_inspection": "passed",
+  "gameplay_tested": false
+}

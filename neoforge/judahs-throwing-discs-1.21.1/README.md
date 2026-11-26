@@ -1,3 +1,3 @@
 # Judah's Throwing Discs — NeoForge 1.21.1
 
-Port in progress. Requires NeoForge 21.1.267. Validation pending.
+Requires NeoForge 21.1.267. Compilation and JAR inspection passed; gameplay not tested. Install only the matching Minecraft version. Includes copper-first creative ordering and mod icon.
