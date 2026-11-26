@@ -1,0 +1,14 @@
+name: JudahsThrowingDiscs
+version: 1.4.1-paper-dev
+main: dev.disc.paper.ThrowingDiscsPlugin
+api-version: '26.3'
+author: JudahXP
+description: Development Paper port of Judah's Throwing Discs
+commands:
+  discs:
+    description: Give a throwing disc for development testing
+    usage: /discs <copper|iron|gold|diamond|netherite>
+    permission: throwingdiscs.admin
+permissions:
+  throwingdiscs.admin:
+    default: op

@@ -1,9 +1,9 @@
-# Paper 26.3 port — in development
+# Paper 26.3 port — development build
 
-This is not a finished or installable plugin. No Paper release has been published.
+Targets Paper 26.3 build 263 and Java 25. This is an unfinished plugin, not a parity release. Compilation passes; no live-server or gameplay test has been performed.
 
-Target: Paper 26.3 build 263, Java 25. Original item assets are included for the companion resource pack. The tier values and pure flight math are ported; gameplay integration is pending.
+Implemented: five identified disc tiers, original resource-pack assets and item models, copper/iron/gold/diamond recipes, admin `/discs <tier>` command, right-click throws using an ItemDisplay, direct smooth return, return-only phasing with both step endpoints within eight blocks, block reflections, one target hit per outbound/return pass, basic durability and recovery on logout/shutdown. Discs are removed from the inventory while in flight.
 
-Parity checklist: item identity and crafting; item-display projectile rendering; direct homing return; return-only phasing with both movement endpoints within eight blocks; bounce and pierce behavior; enchantment registration and restrictions; mature-crop Harvest and drops; dispenser item custody and recovery; durability and repair; melee attributes; owner disconnect/server shutdown recovery; resource-pack distribution; permission and protection-plugin event compatibility.
+Remaining: enchantment registration and mechanics; Harvest; dispenser custody/reuse; netherite smithing; repair and vanilla durability-enchantment handling; melee attributes; exact combat/shield behavior and curve/homing; save/restart persistence; protection-plugin integration; visual orientation and latency checks; resource-pack hosting/configuration and distribution.
 
-Paper cannot add native client item registry entries. Vanilla clients need the resource pack for disc visuals, and the creative inventory cannot be extended like a client mod. These differences must be documented in the final release rather than described as perfect parity.
+Vanilla clients need the resource pack for disc visuals. Paper cannot extend the vanilla creative inventory with native modded registry entries. The admin command is currently the development inventory entry point. Do not deploy this development build on a production world.
