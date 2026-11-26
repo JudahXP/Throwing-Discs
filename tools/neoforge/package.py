@@ -3,7 +3,7 @@ import json,zipfile,hashlib,shutil,sys,tomllib,struct
 repo=Path(__file__).resolve().parents[2];matrix=json.loads((repo/'tools/neoforge/matrix.json').read_text());out=repo/'downloads/neoforge';out.mkdir(exist_ok=True)
 for v in sys.argv[1:]:
  r=repo/'neoforge'/('judahs-throwing-discs-'+v);assert 'BUILD SUCCESSFUL' in (Path('/workspace/work')/f'neoforge-{v}.log').read_text()
- jars=[p for p in (r/'build/libs').glob('*.jar') if 'sources' not in p.name];assert len(jars)==1;jar=jars[0]
+ jars=[p for p in (r/'build/libs').glob('*.jar') if ('-srg.jar' in p.name if matrix[v].get('legacy') else 'sources' not in p.name)];assert len(jars)==1;jar=jars[0]
  with zipfile.ZipFile(jar) as z:
   meta='META-INF/neoforge.mods.toml' if 'META-INF/neoforge.mods.toml' in z.namelist() else 'META-INF/mods.toml';d=tomllib.loads(z.read(meta).decode());assert z.read(d['mods'][0]['logoFile']).startswith(b'\x89PNG');assert 'pack' in json.loads(z.read('pack.mcmeta'));assert len(z.namelist())==len(set(z.namelist()))
   assert json.loads(z.read('throwing_disc.mixins.json'))['compatibilityLevel']!='JAVA_25'

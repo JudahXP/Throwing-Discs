@@ -7,3 +7,5 @@ for v in sorted(json.loads((repo/'tools/neoforge/matrix.json').read_text()),key=
  subprocess.run([sys.executable,'tools/neoforge/build.py',v],cwd=repo,check=True)
  r=subprocess.run([sys.executable,'tools/neoforge/package.py',v],cwd=repo)
  print(v,'ready' if r.returncode==0 else 'needs fix',flush=True)
+ subprocess.run([sys.executable,'tools/neoforge/cleanup.py'],cwd=repo,check=True)
+

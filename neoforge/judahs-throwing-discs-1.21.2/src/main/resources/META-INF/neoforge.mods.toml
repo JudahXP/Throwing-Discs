@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+[[mods]]
+modId="throwing_disc"
+version="1.4.1+1.21.2"
+displayName="Judah's Throwing Discs"
+logoFile="assets/throwing_disc/icon.png"
+authors="JudahXP"
+description="Throwing discs with smooth returns, Harvest and reusable dispenser throws."
+[[dependencies.throwing_disc]]
+modId="neoforge"
+type="required"
+versionRange="[21.2.1-beta,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.throwing_disc]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.2]"
+ordering="NONE"
+side="BOTH"
+
+[[mixins]]
+config="throwing_disc.mixins.json"
