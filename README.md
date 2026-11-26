@@ -40,3 +40,11 @@ Minecraft 1.20.5 and 1.21.2 are omitted because Forge does not publish releases 
 Validation was deliberately limited to compilation and JAR inspection. No game-test suites or gameplay tests were run for these Forge ports.
 
 [Download Forge mods](downloads/judahs-throwing-discs-1.4.1-forge-all-versions.zip) · [Download Forge source](downloads/judahs-throwing-discs-1.4.1-forge-all-versions-sources.zip)
+
+## NeoForge ports
+
+23 builds cover Minecraft 1.20.1 through 26.3. NeoForge has no release for Minecraft 1.20. Install only the matching JAR, without the Fabric or Forge edition alongside it. Includes copper-first ordering, mod icons and existing disc behavior.
+
+[Download NeoForge mods](downloads/judahs-throwing-discs-1.4.1-neoforge-all-versions.zip) · [Download source](downloads/judahs-throwing-discs-1.4.1-neoforge-all-versions-sources.zip)
+
+Compilation and JAR inspection passed; gameplay has not been tested.

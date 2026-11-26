@@ -1,0 +1,2 @@
+f94456ad88941d1777df6dcae8b5db4aa5d3b66ed2f66d6f1a8503984e16450f  judahs-throwing-discs-1.4.1-neoforge-all-versions.zip
+2d9be7f9de7e2fd9b35e4db59d22c820c35ecae21fb87acdff3a1ac1f3fcdc21  judahs-throwing-discs-1.4.1-neoforge-all-versions-sources.zip
