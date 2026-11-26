@@ -1,14 +1,15 @@
-plugins { id 'java'; id 'net.minecraftforge.gradle' version '7.0.29'; id 'net.minecraftforge.renamer' version '1.1.8' }
+plugins {
+ id 'java-library'
+ id 'net.neoforged.gradle' version '6.0.21'
+ id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+}
 version = '1.4.1+1.20.1'
 group = 'dev.disc'
 base.archivesName = 'judahs-throwing-discs-neoforge-mc1.20.1'
-java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+java { toolchain.languageVersion = JavaLanguageVersion.of(17); withSourcesJar() }
 sourceSets.main.java.srcDir 'src/client/java'
 minecraft { mappings channel: 'official', version: '1.20.1' }
-repositories { maven { url = 'https://maven.neoforged.net/releases' }; minecraft.mavenizer(it); maven fg.forgeMaven; maven fg.minecraftLibsMaven; mavenCentral() }
-dependencies { implementation minecraft.dependency('net.neoforged:forge:1.20.1-47.1.106'); annotationProcessor 'org.spongepowered:mixin:0.8.7:processor' }
-tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 17 }
-jar { manifest.attributes('MixinConfigs': 'throwing_disc.mixins.json'); from('LICENSE') }
-renamer.enableMixinRefmaps { config 'throwing_disc.mixins.json'; refMap = 'throwing_disc.refmap.json' }
-renamer.classes(tasks.named('jar', Jar)) { archiveClassifier = 'srg'; mappings renamer.mixin.generatedMappings }
-renamer.mappings(minecraft.dependency.toSrg)
+repositories { mavenCentral(); maven { url = 'https://maven.neoforged.net/releases' }; maven { url = 'https://repo.spongepowered.org/repository/maven-public/' } }
+dependencies { minecraft 'net.neoforged:forge:1.20.1-47.1.106'; annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' }
+mixin { add sourceSets.main, 'throwing_disc.refmap.json'; config 'throwing_disc.mixins.json' }
+jar { from('LICENSE'); manifest.attributes('MixinConfigs': 'throwing_disc.mixins.json'); finalizedBy 'reobfJar' }
